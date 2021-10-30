@@ -105,10 +105,12 @@ abstract contract BaseParaSwapAdapter is FlashLoanReceiverBase, Ownable {
     reserveAToken.safeTransferFrom(user, address(this), amount);
 
     // withdraw reserve
+    /*
     require(
       LENDING_POOL.withdraw(reserve, amount, address(this)) == amount,
       'UNEXPECTED_AMOUNT_WITHDRAWN'
     );
+    */
   }
 
   /**

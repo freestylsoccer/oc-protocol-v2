@@ -25,6 +25,10 @@ library DataTypes {
     address interestRateStrategyAddress;
     //the id of the reserve. Represents the position in the list of the active reserves
     uint8 id;
+    // underlaying asset
+    address underlyingAsset;
+    // project borrower of the project
+    address projectBorrower;
   }
 
   struct ReserveConfigurationMap {
@@ -38,6 +42,7 @@ library DataTypes {
     //bit 59: stable rate borrowing enabled
     //bit 60-63: reserved
     //bit 64-79: reserve factor
+    //bit 80: deposits are enabled
     uint256 data;
   }
 

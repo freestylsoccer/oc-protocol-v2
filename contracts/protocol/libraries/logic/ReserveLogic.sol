@@ -163,10 +163,12 @@ library ReserveLogic {
    **/
   function init(
     DataTypes.ReserveData storage reserve,
+    address asset,
     address aTokenAddress,
     address stableDebtTokenAddress,
     address variableDebtTokenAddress,
-    address interestRateStrategyAddress
+    address interestRateStrategyAddress,
+    address projectBorrower
   ) external {
     require(reserve.aTokenAddress == address(0), Errors.RL_RESERVE_ALREADY_INITIALIZED);
 
@@ -176,6 +178,8 @@ library ReserveLogic {
     reserve.stableDebtTokenAddress = stableDebtTokenAddress;
     reserve.variableDebtTokenAddress = variableDebtTokenAddress;
     reserve.interestRateStrategyAddress = interestRateStrategyAddress;
+    reserve.underlyingAsset = asset;
+    reserve.projectBorrower = projectBorrower;
   }
 
   struct UpdateInterestRatesLocalVars {
@@ -243,6 +247,36 @@ library ReserveLogic {
       vars.newLiquidityRate,
       vars.newStableRate,
       vars.newVariableRate,
+      reserve.liquidityIndex,
+      reserve.variableBorrowIndex
+    );
+  }
+
+  /**
+   * @dev Updates the reserve current stable borrow rate, the current variable borrow rate and the current liquidity rate
+   * @param reserve The address of the reserve to be updated
+   * @param depositRate The new deposit rate
+   * @param borrowRate The new borrow rate
+   **/
+  function updateProjectInterestRates(
+    DataTypes.ReserveData storage reserve,
+    address reserveAddress,
+    uint128 depositRate,
+    uint128 borrowRate
+  ) internal {
+
+    require(depositRate <= type(uint128).max, Errors.RL_LIQUIDITY_RATE_OVERFLOW);
+    require(borrowRate <= type(uint128).max, Errors.RL_STABLE_BORROW_RATE_OVERFLOW);
+
+    reserve.currentLiquidityRate = depositRate;
+    reserve.currentStableBorrowRate = borrowRate;
+    reserve.currentVariableBorrowRate = borrowRate;
+
+    emit ReserveDataUpdated(
+      reserveAddress,
+      depositRate,
+      borrowRate,
+      borrowRate,
       reserve.liquidityIndex,
       reserve.variableBorrowIndex
     );

@@ -39,6 +39,7 @@ contract AToken is
 
   ILendingPool internal _pool;
   address internal _treasury;
+  address internal _project;
   address internal _underlyingAsset;
   IAaveIncentivesController internal _incentivesController;
 
@@ -55,7 +56,7 @@ contract AToken is
    * @dev Initializes the aToken
    * @param pool The address of the lending pool where this aToken will be used
    * @param treasury The address of the Aave treasury, receiving the fees on this aToken
-   * @param underlyingAsset The address of the underlying asset of this aToken (E.g. WETH for aWETH)
+   * @param project The address of the proyect contrat associated to the reserve
    * @param incentivesController The smart contract managing potential incentives distribution
    * @param aTokenDecimals The decimals of the aToken, same as the underlying asset's
    * @param aTokenName The name of the aToken
@@ -64,7 +65,7 @@ contract AToken is
   function initialize(
     ILendingPool pool,
     address treasury,
-    address underlyingAsset,
+    address project,
     IAaveIncentivesController incentivesController,
     uint8 aTokenDecimals,
     string calldata aTokenName,
@@ -94,11 +95,12 @@ contract AToken is
 
     _pool = pool;
     _treasury = treasury;
-    _underlyingAsset = underlyingAsset;
+    _project = project;
+    _underlyingAsset = pool.getUnderlyingAsset(_project);
     _incentivesController = incentivesController;
 
     emit Initialized(
-      underlyingAsset,
+      _underlyingAsset,
       address(pool),
       treasury,
       address(incentivesController),
@@ -373,10 +375,11 @@ contract AToken is
     uint256 amount,
     bool validate
   ) internal {
-    address underlyingAsset = _underlyingAsset;
+    address project = _project;
+    // address underlyingAsset = _underlyingAsset;
     ILendingPool pool = _pool;
 
-    uint256 index = pool.getReserveNormalizedIncome(underlyingAsset);
+    uint256 index = pool.getReserveNormalizedIncome(project);
 
     uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
     uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);
@@ -384,7 +387,7 @@ contract AToken is
     super._transfer(from, to, amount.rayDiv(index));
 
     if (validate) {
-      pool.finalizeTransfer(underlyingAsset, from, to, amount, fromBalanceBefore, toBalanceBefore);
+      pool.finalizeTransfer(project, from, to, amount, fromBalanceBefore, toBalanceBefore);
     }
 
     emit BalanceTransfer(from, to, amount, index);

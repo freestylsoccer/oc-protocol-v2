@@ -10,8 +10,10 @@ interface ILendingPoolConfigurator {
     uint8 underlyingAssetDecimals;
     address interestRateStrategyAddress;
     address underlyingAsset;
+    address project;
     address treasury;
     address incentivesController;
+    address projectBorrower;
     string underlyingAssetName;
     string aTokenName;
     string aTokenSymbol;
@@ -176,4 +178,17 @@ interface ILendingPoolConfigurator {
     address indexed proxy,
     address indexed implementation
   );
+
+  /**
+   * @dev Emitted when borrowing is enabled on a reserve
+   * @param project The address of the project contrat associated to the reserve
+   * @param enabled True if deposits are enabled, false otherwise
+   **/
+  event DepositsEnabledOnReserve(address project, bool enabled);
+
+  /**
+   * @dev Emitted when deposits are disabled on a reserve
+   * @param project The address of the project contrat associated to the reserve
+   **/
+  event DepositsDisabledOnReserve(address indexed project);
 }

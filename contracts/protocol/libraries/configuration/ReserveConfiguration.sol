@@ -19,6 +19,7 @@ library ReserveConfiguration {
   uint256 constant BORROWING_MASK =             0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBFFFFFFFFFFFFFF; // prettier-ignore
   uint256 constant STABLE_BORROWING_MASK =      0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFFFFFFFFFFF; // prettier-ignore
   uint256 constant RESERVE_FACTOR_MASK =        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFF; // prettier-ignore
+  uint256 constant DESPOSITS_MASK =             0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFFFFFF; // prettier-ignore
 
   /// @dev For the LTV, the start bit is 0 (up to 15), hence no bitshifting is needed
   uint256 constant LIQUIDATION_THRESHOLD_START_BIT_POSITION = 16;
@@ -29,6 +30,7 @@ library ReserveConfiguration {
   uint256 constant BORROWING_ENABLED_START_BIT_POSITION = 58;
   uint256 constant STABLE_BORROWING_ENABLED_START_BIT_POSITION = 59;
   uint256 constant RESERVE_FACTOR_START_BIT_POSITION = 64;
+  uint256 constant DEPOSITS_ENABLED_START_BIT_POSITION = 80;
 
   uint256 constant MAX_VALID_LTV = 65535;
   uint256 constant MAX_VALID_LIQUIDATION_THRESHOLD = 65535;
@@ -276,6 +278,7 @@ library ReserveConfiguration {
       bool,
       bool,
       bool,
+      bool,
       bool
     )
   {
@@ -285,7 +288,8 @@ library ReserveConfiguration {
       (dataLocal & ~ACTIVE_MASK) != 0,
       (dataLocal & ~FROZEN_MASK) != 0,
       (dataLocal & ~BORROWING_MASK) != 0,
-      (dataLocal & ~STABLE_BORROWING_MASK) != 0
+      (dataLocal & ~STABLE_BORROWING_MASK) != 0,
+      (dataLocal & ~DESPOSITS_MASK) != 0
     );
   }
 
@@ -362,5 +366,32 @@ library ReserveConfiguration {
       (self.data & ~BORROWING_MASK) != 0,
       (self.data & ~STABLE_BORROWING_MASK) != 0
     );
+  }  
+
+  /**
+   * @dev Enables or disables deposits on the reserve
+   * @param self The reserve configuration
+   * @param enabled True if the deposits needs to be enabled, false otherwise
+   **/
+  function setDepositsEnabled(DataTypes.ReserveConfigurationMap memory self, bool enabled)
+    internal
+    pure
+  {
+    self.data =
+      (self.data & DESPOSITS_MASK) |
+      (uint256(enabled ? 1 : 0) << DEPOSITS_ENABLED_START_BIT_POSITION);
+  }
+
+  /**
+   * @dev Gets the deposits state of the reserve
+   * @param self The reserve configuration
+   * @return The deposits status
+   **/
+  function getDepositsEnabled(DataTypes.ReserveConfigurationMap storage self)
+    internal
+    view
+    returns (bool)
+  {
+    return (self.data & ~DESPOSITS_MASK) != 0;
   }
 }

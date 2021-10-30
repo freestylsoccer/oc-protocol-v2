@@ -1,0 +1,15 @@
+Requerimientos
+1. crear más de 1 reserva por token, es decir, puede haber más de una reserva en USDT, DAI o TUSD.
+  modificar las funciones que invocan a la reserva mediente el asset
+  crear un smart contract llamado project
+2. solo el project borrower puede retirar los fondos, y como backup el emergency admin.
+  funcion para actualizar al project borrower
+3. los retiros y depositos se bloquean o desbloquean segun el cumplimiento.
+  retiros -> done
+  depositos -> done
+4. los ATokens solo van a llevar el seguimiento de los intereses que generan los depósitos de los usuarios.
+5. los BTokens solo van a llevar el cápital depositado por los usuarios.
+6. el reserve configuration manager va a actualizar el rate de intereses en depositos y retiros.
+  -> done
+7. quitar referalCode
+  -> done

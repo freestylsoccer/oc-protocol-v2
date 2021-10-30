@@ -115,11 +115,13 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
       );
 
     pool.initReserve(
+      input.project,
       input.underlyingAsset,
       aTokenProxyAddress,
       stableDebtTokenProxyAddress,
       variableDebtTokenProxyAddress,
-      input.interestRateStrategyAddress
+      input.interestRateStrategyAddress,
+      input.projectBorrower
     );
 
     DataTypes.ReserveConfigurationMap memory currentConfig =
@@ -483,5 +485,48 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
       availableLiquidity == 0 && reserveData.currentLiquidityRate == 0,
       Errors.LPC_RESERVE_LIQUIDITY_NOT_0
     );
+  }
+
+  function updateProjectBorrower(address project, address borrower) external onlyPoolAdmin {
+    pool.updateProjectBorrower(project, borrower);
+  }
+
+  /**
+   * @dev Enables deposits on a reserve
+   * @param project The address of the project contrat associated to the reserve
+   **/
+  function enableDepositsOnReserve(address project)
+    external
+    onlyPoolAdmin
+  {
+    DataTypes.ReserveConfigurationMap memory currentConfig = pool.getConfiguration(project);
+
+    currentConfig.setDepositsEnabled(true);
+
+    pool.setConfiguration(project, currentConfig.data);
+
+    emit DepositsEnabledOnReserve(project, true);
+  }
+
+  /**
+   * @dev Disables deposits on a reserve
+   * @param project The address of the project contrat associated to the reserve
+   **/
+  function disableDepositsOnReserve(address project) external onlyPoolAdmin {
+    DataTypes.ReserveConfigurationMap memory currentConfig = pool.getConfiguration(project);
+
+    currentConfig.setDepositsEnabled(false);
+
+    pool.setConfiguration(project, currentConfig.data);
+
+    emit BorrowingDisabledOnReserve(project);
+  }
+
+  function updateReserveRates(
+    address project,
+    uint128 newDespositRate,
+    uint128 newBorrowRate
+    ) external onlyPoolAdmin {
+      pool.updateInterestRates(project, newDespositRate, newBorrowRate);
   }
 }
