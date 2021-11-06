@@ -74,13 +74,11 @@ contract WETHGateway is IWETHGateway, Ownable {
    * @dev repays a borrow on the WETH reserve, for the specified amount (or for the whole amount, if uint256(-1) is specified).
    * @param lendingPool address of the targeted underlying lending pool
    * @param amount the amount to repay, or uint256(-1) if the user wants to repay everything
-   * @param rateMode the rate mode to repay
    * @param onBehalfOf the address for which msg.sender is repaying
    */
   function repayETH(
     address lendingPool,
     uint256 amount,
-    uint256 rateMode,
     address onBehalfOf
   ) external payable override {
     (uint256 stableDebt, uint256 variableDebt) =
@@ -90,7 +88,7 @@ contract WETHGateway is IWETHGateway, Ownable {
       );
 
     uint256 paybackAmount =
-      DataTypes.InterestRateMode(rateMode) == DataTypes.InterestRateMode.STABLE
+      DataTypes.InterestRateMode(1) == DataTypes.InterestRateMode.STABLE
         ? stableDebt
         : variableDebt;
 
@@ -99,7 +97,7 @@ contract WETHGateway is IWETHGateway, Ownable {
     }
     require(msg.value >= paybackAmount, 'msg.value is less than repayment amount');
     WETH.deposit{value: paybackAmount}();
-    ILendingPool(lendingPool).repay(address(WETH), address(WETH), msg.value, rateMode, onBehalfOf);
+    ILendingPool(lendingPool).repay(address(WETH), address(WETH), msg.value, onBehalfOf);
 
     // refund remaining dust eth
     if (msg.value > paybackAmount) _safeTransferETH(msg.sender, msg.value - paybackAmount);

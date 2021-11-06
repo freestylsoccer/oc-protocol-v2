@@ -9,8 +9,6 @@ import {Address} from '../../dependencies/openzeppelin/contracts/Address.sol';
 import {ILendingPoolAddressesProvider} from '../../interfaces/ILendingPoolAddressesProvider.sol';
 import {IAToken} from '../../interfaces/IAToken.sol';
 import {IVariableDebtToken} from '../../interfaces/IVariableDebtToken.sol';
-import {IFlashLoanReceiver} from '../../flashloan/interfaces/IFlashLoanReceiver.sol';
-import {IPriceOracleGetter} from '../../interfaces/IPriceOracleGetter.sol';
 import {IStableDebtToken} from '../../interfaces/IStableDebtToken.sol';
 import {ILendingPool} from '../../interfaces/ILendingPool.sol';
 import {VersionedInitializable} from '../libraries/aave-upgradeability/VersionedInitializable.sol';
@@ -159,16 +157,10 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
       project,
       amountToWithdraw,
       userBalance,
-      _reserves,
-      _usersConfig[msg.sender],
-      _reservesList,
-      _reservesCount,
-      _addressesProvider.getPriceOracle()
+      _reserves
     );
 
     reserve.updateState();
-
-    reserve.updateInterestRates(asset, aToken, 0, amountToWithdraw);
 
     if (amountToWithdraw == userBalance) {
       _usersConfig[msg.sender].setUsingAsCollateral(reserve.id, false);
@@ -225,7 +217,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
    * @param asset The address of the borrowed underlying asset previously borrowed
    * @param amount The amount to repay
    * - Send the value type(uint256).max in order to repay the whole debt for `asset` on the specific `debtMode`
-   * @param rateMode The interest rate mode at of the debt the user wants to repay: 1 for Stable, 2 for Variable
    * @param onBehalfOf Address of the user who will get his debt reduced/removed. Should be the address of the
    * user calling the function if he wants to reduce/remove his own debt, or the address of any other
    * other borrower whose debt should be removed
@@ -235,7 +226,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address project,
     address asset,
     uint256 amount,
-    uint256 rateMode,
     address onBehalfOf
   ) external override whenNotPaused returns (uint256) {
     DataTypes.ReserveData storage reserve = _reserves[asset];
@@ -244,7 +234,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     (uint256 stableDebt, uint256 variableDebt) = Helpers.getUserCurrentDebt(onBehalfOf, reserve);
 
-    DataTypes.InterestRateMode interestRateMode = DataTypes.InterestRateMode(rateMode);
+    DataTypes.InterestRateMode interestRateMode = DataTypes.InterestRateMode(1);
 
     ValidationLogic.validateRepay(
       reserve,
@@ -275,7 +265,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     }
 
     address aToken = reserve.aTokenAddress;
-    reserve.updateInterestRates(asset, aToken, paybackAmount, 0);
 
     if (stableDebt.add(variableDebt).sub(paybackAmount) == 0) {
       _usersConfig[onBehalfOf].setBorrowing(reserve.id, false);
@@ -285,7 +274,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     IAToken(aToken).handleRepayment(msg.sender, paybackAmount);
 
-    emit Repay(asset, onBehalfOf, msg.sender, paybackAmount);
+    emit Repay(project, asset, onBehalfOf, msg.sender, paybackAmount);
 
     return paybackAmount;
   }  
@@ -302,51 +291,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     returns (DataTypes.ReserveData memory)
   {
     return _reserves[project];
-  }
-
-  /**
-   * @dev Returns the user account data across all the reserves
-   * @param user The address of the user
-   * @return totalCollateralETH the total collateral in ETH of the user
-   * @return totalDebtETH the total debt in ETH of the user
-   * @return availableBorrowsETH the borrowing power left of the user
-   * @return currentLiquidationThreshold the liquidation threshold of the user
-   * @return ltv the loan to value of the user
-   * @return healthFactor the current health factor of the user
-   **/
-  function getUserAccountData(address user)
-    external
-    view
-    override
-    returns (
-      uint256 totalCollateralETH,
-      uint256 totalDebtETH,
-      uint256 availableBorrowsETH,
-      uint256 currentLiquidationThreshold,
-      uint256 ltv,
-      uint256 healthFactor
-    )
-  {
-    (
-      totalCollateralETH,
-      totalDebtETH,
-      ltv,
-      currentLiquidationThreshold,
-      healthFactor
-    ) = GenericLogic.calculateUserAccountData(
-      user,
-      _reserves,
-      _usersConfig[user],
-      _reservesList,
-      _reservesCount,
-      _addressesProvider.getPriceOracle()
-    );
-
-    availableBorrowsETH = GenericLogic.calculateAvailableBorrowsETH(
-      totalCollateralETH,
-      totalDebtETH,
-      ltv
-    );
   }
 
   /**
@@ -472,15 +416,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     uint256 balanceToBefore
   ) external override whenNotPaused {
     require(msg.sender == _reserves[project].aTokenAddress, Errors.LP_CALLER_MUST_BE_AN_ATOKEN);
-
-    ValidationLogic.validateTransfer(
-      from,
-      _reserves,
-      _usersConfig[from],
-      _reservesList,
-      _reservesCount,
-      _addressesProvider.getPriceOracle()
-    );
 
     uint256 reserveId = _reserves[project].id;
 
@@ -615,7 +550,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     }    
 
     if (vars.releaseUnderlying) {
-      IAToken(vars.aTokenAddress).transferUnderlyingTo(vars.user, vars.amount);
+      IAToken(vars.aTokenAddress).transferUnderlyingTo(vars.asset, vars.user, vars.amount);
     }
 
     emit Borrow(

@@ -42,9 +42,12 @@ contract AaveProtocolDataProvider {
         reservesTokens[i] = TokenData({symbol: 'ETH', tokenAddress: reserves[i]});
         continue;
       }
+      
+      DataTypes.ReserveData memory reserveData = pool.getReserveData(reserves[i]);
+
       reservesTokens[i] = TokenData({
-        symbol: IERC20Detailed(reserves[i]).symbol(),
-        tokenAddress: reserves[i]
+        symbol: IERC20Detailed(reserveData.underlyingAsset).symbol(),
+        tokenAddress: reserveData.underlyingAsset
       });
     }
     return reservesTokens;
@@ -112,7 +115,7 @@ contract AaveProtocolDataProvider {
       ILendingPool(ADDRESSES_PROVIDER.getLendingPool()).getReserveData(asset);
 
     return (
-      IERC20Detailed(asset).balanceOf(reserve.aTokenAddress),
+      IERC20Detailed(reserve.underlyingAsset).balanceOf(reserve.aTokenAddress),
       IERC20Detailed(reserve.stableDebtTokenAddress).totalSupply(),
       IERC20Detailed(reserve.variableDebtTokenAddress).totalSupply(),
       reserve.currentLiquidityRate,

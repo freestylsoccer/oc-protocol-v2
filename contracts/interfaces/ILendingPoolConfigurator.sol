@@ -191,4 +191,17 @@ interface ILendingPoolConfigurator {
    * @param project The address of the project contrat associated to the reserve
    **/
   event DepositsDisabledOnReserve(address indexed project);
+
+  /**
+   * @dev Emitted when borrowing is enabled on a reserve
+   * @param project The address of the project contrat associated to the reserve
+   * @param enabled True if deposits are enabled, false otherwise
+   **/
+  event WithdrawalsEnabledOnReserve(address project, bool enabled);
+
+  /**
+   * @dev Emitted when Withdrawals are disabled on a reserve
+   * @param project The address of the project contrat associated to the reserve
+   **/
+  event WithdrawalsDisabledOnReserve(address indexed project);
 }

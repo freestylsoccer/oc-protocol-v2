@@ -96,14 +96,14 @@ contract AToken is
     _pool = pool;
     _treasury = treasury;
     _project = project;
-    _underlyingAsset = pool.getUnderlyingAsset(_project);
+    _underlyingAsset = _pool.getUnderlyingAsset(_project);
     _incentivesController = incentivesController;
 
     emit Initialized(
       _underlyingAsset,
-      address(pool),
+      address(_pool),
       treasury,
-      address(incentivesController),
+      address(incentivesController),  
       aTokenDecimals,
       aTokenName,
       aTokenSymbol,
@@ -128,7 +128,7 @@ contract AToken is
     uint256 amountScaled = amount.rayDiv(index);
     require(amountScaled != 0, Errors.CT_INVALID_BURN_AMOUNT);
     _burn(user, amountScaled);
-
+    _underlyingAsset = _pool.getUnderlyingAsset(_project);
     IERC20(_underlyingAsset).safeTransfer(receiverOfUnderlying, amount);
 
     emit Transfer(user, address(0), amount);
@@ -213,7 +213,7 @@ contract AToken is
     override(IncentivizedERC20, IERC20)
     returns (uint256)
   {
-    return super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_underlyingAsset));
+    return super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_project));
   }
 
   /**
@@ -254,7 +254,7 @@ contract AToken is
       return 0;
     }
 
-    return currentSupplyScaled.rayMul(_pool.getReserveNormalizedIncome(_underlyingAsset));
+    return currentSupplyScaled.rayMul(_pool.getReserveNormalizedIncome(_project));
   }
 
   /**
@@ -307,13 +307,13 @@ contract AToken is
    * @param amount The amount getting transferred
    * @return The amount transferred
    **/
-  function transferUnderlyingTo(address target, uint256 amount)
+  function transferUnderlyingTo(address asset, address target, uint256 amount)
     external
     override
     onlyLendingPool
     returns (uint256)
   {
-    IERC20(_underlyingAsset).safeTransfer(target, amount);
+    IERC20(asset).safeTransfer(target, amount);
     return amount;
   }
 

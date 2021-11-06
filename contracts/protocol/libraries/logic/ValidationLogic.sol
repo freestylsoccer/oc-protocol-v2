@@ -44,7 +44,7 @@ library ValidationLogic {
     require(amount != 0, Errors.VL_INVALID_AMOUNT);
     require(isActive, Errors.VL_NO_ACTIVE_RESERVE);
     require(!isFrozen, Errors.VL_RESERVE_FROZEN);
-    require(!depositsEnabled, Errors.VL_DEPOSITS_DISABLED);
+    require(depositsEnabled, Errors.VL_DEPOSITS_DISABLED);
   }
 
   /**
@@ -53,40 +53,21 @@ library ValidationLogic {
    * @param amount The amount to be withdrawn
    * @param userBalance The balance of the user
    * @param reservesData The reserves state
-   * @param userConfig The user configuration
-   * @param reserves The addresses of the reserves
-   * @param reservesCount The number of reserves
-   * @param oracle The price oracle
    */
   function validateWithdraw(
     address reserveAddress,
     uint256 amount,
     uint256 userBalance,
-    mapping(address => DataTypes.ReserveData) storage reservesData,
-    DataTypes.UserConfigurationMap storage userConfig,
-    mapping(uint256 => address) storage reserves,
-    uint256 reservesCount,
-    address oracle
+    mapping(address => DataTypes.ReserveData) storage reservesData
   ) external view {
     require(amount != 0, Errors.VL_INVALID_AMOUNT);
     require(amount <= userBalance, Errors.VL_NOT_ENOUGH_AVAILABLE_USER_BALANCE);
 
     (bool isActive, , , , ) = reservesData[reserveAddress].configuration.getFlags();
-    require(isActive, Errors.VL_NO_ACTIVE_RESERVE);
+    bool withdrawalsEnabled = reservesData[reserveAddress].configuration.getWithdrawalsEnabled();
 
-    require(
-      GenericLogic.balanceDecreaseAllowed(
-        reserveAddress,
-        msg.sender,
-        amount,
-        reservesData,
-        userConfig,
-        reserves,
-        reservesCount,
-        oracle
-      ),
-      Errors.VL_TRANSFER_NOT_ALLOWED
-    );
+    require(isActive, Errors.VL_NO_ACTIVE_RESERVE);
+    require(withdrawalsEnabled, Errors.VL_WITHDRAWALS_DISABLED);
   }
 
   struct ValidateBorrowLocalVars {

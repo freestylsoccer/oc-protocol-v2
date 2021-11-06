@@ -33,6 +33,8 @@ contract ATokensAndRatesHelper is Ownable {
     uint256 reserveFactor;
     bool stableBorrowingEnabled;
     bool borrowingEnabled;
+    bool depositsEnabled;
+    bool withdrawalsEnabled;
   }
 
   constructor(
@@ -78,6 +80,18 @@ contract ATokensAndRatesHelper is Ownable {
         configurator.enableBorrowingOnReserve(
           inputParams[i].asset,
           inputParams[i].stableBorrowingEnabled
+        );
+      }
+
+      if (inputParams[i].depositsEnabled) {
+        configurator.enableDepositsOnReserve(
+          inputParams[i].asset
+        );
+      }
+
+      if (inputParams[i].withdrawalsEnabled) {
+        configurator.enableWithdrawalsOnReserve(
+          inputParams[i].asset
         );
       }
       configurator.setReserveFactor(inputParams[i].asset, inputParams[i].reserveFactor);

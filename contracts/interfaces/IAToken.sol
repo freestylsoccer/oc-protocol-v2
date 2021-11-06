@@ -86,7 +86,7 @@ interface IAToken is IERC20, IScaledBalanceToken, IInitializableAToken {
    * @param amount The amount getting transferred
    * @return The amount transferred
    **/
-  function transferUnderlyingTo(address user, uint256 amount) external returns (uint256);
+  function transferUnderlyingTo(address asset, address user, uint256 amount) external returns (uint256);
 
   /**
    * @dev Invoked to execute actions on the aToken side after a repayment.

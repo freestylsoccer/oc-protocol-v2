@@ -9,6 +9,4 @@ interface IProject {
   function setFinished(bool val) external;
   function setStarDate(uint40 _startDate) external;
   function setEndDate(uint40 _endDate) external;
-  function setLiquidityRate(uint128 val) external;
-  function setName(string memory _name) external;
 }

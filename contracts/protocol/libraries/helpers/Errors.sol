@@ -105,6 +105,7 @@ library Errors {
   string public constant SDT_BURN_EXCEEDS_BALANCE = '80';
   string public constant LP_INVALID_ASSET = '81';
   string public constant VL_DEPOSITS_DISABLED = '82';
+  string public constant VL_WITHDRAWALS_DISABLED = '83';
 
   enum CollateralManagerErrors {
     NO_ERROR,

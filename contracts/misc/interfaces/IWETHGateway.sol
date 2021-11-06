@@ -16,7 +16,6 @@ interface IWETHGateway {
   function repayETH(
     address lendingPool,
     uint256 amount,
-    uint256 rateMode,
     address onBehalfOf
   ) external payable;
 

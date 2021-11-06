@@ -75,3 +75,14 @@ export const MOCK_CHAINLINK_AGGREGATORS_PRICES = {
   WAVAX: oneEther.multipliedBy('0.006051936629').toFixed(),
   USD: '5848466240000000',
 };
+
+export const MOCK_CHAINLINK_AGGREGATORS_PRICES_2 = {
+  // Update to USD-based price feeds
+  BUSD: oneEther.multipliedBy('0.00736484').toFixed(),
+  DAI: oneEther.multipliedBy('0.00369068412860').toFixed(),
+  SUSD: oneEther.multipliedBy('0.00364714136416').toFixed(),
+  TUSD: oneEther.multipliedBy('0.00364714136416').toFixed(),  
+  USDC: oneEther.multipliedBy('0.00367714136416').toFixed(),
+  USDT: oneEther.multipliedBy('0.00369068412860').toFixed(),
+  USD: '5848466240000000',
+};

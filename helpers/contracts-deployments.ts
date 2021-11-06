@@ -12,6 +12,7 @@ import {
   eEthereumNetwork,
 } from './types';
 import { MintableERC20 } from '../types/MintableERC20';
+import { Project } from '../types/Project';
 import { MockContract } from 'ethereum-waffle';
 import { ConfigNames, getReservesConfigByPool, loadPoolConfig } from './configuration';
 import { getFirstSigner } from './contracts-getters';
@@ -51,6 +52,7 @@ import {
   WETH9MockedFactory,
   WETHGatewayFactory,
   FlashLiquidationAdapterFactory,
+  ProjectFactory,
 } from '../types';
 import {
   withSaveAndVerify,
@@ -302,6 +304,16 @@ export const deployMintableERC20 = async (
     verify
   );
 
+  export const deployMockProjects = async (
+    args: [string, string, string],
+    verify?: boolean
+  ): Promise<Project> =>
+  withSaveAndVerify(
+    await new ProjectFactory(await getFirstSigner()).deploy(...args),
+    eContractid.Project,
+    args,
+    verify
+  );
 export const deployMintableDelegationERC20 = async (
   args: [string, string, string],
   verify?: boolean
