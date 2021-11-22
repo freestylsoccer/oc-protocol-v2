@@ -5,6 +5,7 @@ import {
   getLendingPoolAddressesProvider,
   getAaveProtocolDataProvider,
   getAToken,
+  getPToken,
   getMintableERC20,
   getLendingPoolConfiguratorProxy,
   getPriceOracle,
@@ -15,12 +16,17 @@ import {
   getUniswapRepayAdapter,
   getFlashLiquidationAdapter,
   getParaSwapLiquiditySwapAdapter,
+  getStableDebtToken,
+  getVariableDebtToken
 } from '../../../helpers/contracts-getters';
 import { eEthereumNetwork, eNetwork, tEthereumAddress } from '../../../helpers/types';
 import { LendingPool } from '../../../types/LendingPool';
 import { AaveProtocolDataProvider } from '../../../types/AaveProtocolDataProvider';
 import { MintableERC20 } from '../../../types/MintableERC20';
 import { AToken } from '../../../types/AToken';
+import { StableDebtToken } from '../../../types';
+import { VariableDebtToken } from '../../../types';
+import { PToken } from '../../../types';
 import { LendingPoolConfigurator } from '../../../types/LendingPoolConfigurator';
 
 import chai from 'chai';
@@ -63,6 +69,7 @@ export interface TestEnv {
   dai: MintableERC20;
   aDai: AToken;
   usdc: MintableERC20;
+  aUsdc: AToken;
   aave: MintableERC20;
   addressesProvider: LendingPoolAddressesProvider;
   uniswapLiquiditySwapAdapter: UniswapLiquiditySwapAdapter;
@@ -72,6 +79,12 @@ export interface TestEnv {
   flashLiquidationAdapter: FlashLiquidationAdapter;
   paraswapLiquiditySwapAdapter: ParaSwapLiquiditySwapAdapter;
   allReserves: string[];
+  stableDebToken: StableDebtToken;
+  variableDebToken: VariableDebtToken;
+  stableDebTokenUsdc: StableDebtToken;
+  variableDebTokenUsdc: VariableDebtToken;
+  pToken: PToken;
+  pUsdc: PToken;
 }
 
 let buidlerevmSnapshotId: string = '0x1';
@@ -91,6 +104,7 @@ const testEnv: TestEnv = {
   dai: {} as MintableERC20,
   aDai: {} as AToken,
   usdc: {} as MintableERC20,
+  aUsdc: {} as AToken,
   aave: {} as MintableERC20,
   addressesProvider: {} as LendingPoolAddressesProvider,
   uniswapLiquiditySwapAdapter: {} as UniswapLiquiditySwapAdapter,
@@ -100,6 +114,12 @@ const testEnv: TestEnv = {
   registry: {} as LendingPoolAddressesProviderRegistry,
   wethGateway: {} as WETHGateway,
   allReserves: [],
+  stableDebToken: {} as StableDebtToken,
+  variableDebToken: {} as VariableDebtToken,
+  stableDebTokenUsdc: {} as StableDebtToken,
+  variableDebTokenUsdc: {} as VariableDebtToken,
+  pToken: {} as PToken,
+  pUsdc: {} as PToken,
 } as TestEnv;
 
 export async function initializeMakeSuite() {
@@ -136,10 +156,12 @@ export async function initializeMakeSuite() {
   const allTokens = await testEnv.helpersContract.getAllATokens();
   // console.log(allTokens);
   const aDaiAddress = allTokens.find((aToken) => aToken.symbol === 'aDAI')?.tokenAddress;
+  const aUsdcAddress = allTokens.find((aToken) => aToken.symbol === 'aUSDC')?.tokenAddress;
 
   // const aWEthAddress = allTokens.find((aToken) => aToken.symbol === 'aWETH')?.tokenAddress;
 
   const reservesTokens = await testEnv.helpersContract.getAllReservesTokens();
+  // console.log(reservesTokens);
 
   const daiAddress = reservesTokens.find((token) => token.symbol === 'DAI')?.tokenAddress;
   const usdcAddress = reservesTokens.find((token) => token.symbol === 'USDC')?.tokenAddress;
@@ -150,7 +172,7 @@ export async function initializeMakeSuite() {
 
   // console.log(await testEnv.pool.getUnderlyingAsset(testEnv.allReserves[1]));
 
-  if (!aDaiAddress) {
+  if (!aDaiAddress|| !aUsdcAddress) {
     process.exit(1);
   }
   if (!daiAddress || !usdcAddress) {
@@ -158,10 +180,32 @@ export async function initializeMakeSuite() {
   }
 
   testEnv.aDai = await getAToken(aDaiAddress);
+  testEnv.aUsdc = await getAToken(aUsdcAddress);
   // testEnv.aWETH = await getAToken(aWEthAddress);
 
   testEnv.dai = await getMintableERC20(daiAddress);
   testEnv.usdc = await getMintableERC20(usdcAddress);
+
+  const reserveData = await testEnv.pool.getReserveData(testEnv.allReserves[1]);
+  testEnv.stableDebToken = await getStableDebtToken(reserveData[8]);
+  testEnv.variableDebToken = await getVariableDebtToken(reserveData[9]);
+  // console.log(reserveData);
+  // console.log(reserveData[14]);
+  testEnv.pToken = await getPToken(reserveData[14]);
+  // "0x073c411d109feb1b0E5B00C9D3Dd6fC27464e5cb"
+  // "0x235AaDb27eA828b183EE179D39B68A9E0956d12a"
+  const reserveDataUsdc = await testEnv.pool.getReserveData(testEnv.allReserves[4]);
+  testEnv.stableDebTokenUsdc = await getStableDebtToken(reserveDataUsdc[8]);
+  testEnv.variableDebTokenUsdc = await getVariableDebtToken(reserveDataUsdc[9]);
+  // console.log(reserveDataUsdc);
+  testEnv.pUsdc = await getPToken(reserveDataUsdc[14]);
+
+
+  for (let i=0; i<testEnv.allReserves.length; i++) {
+    // console.log(await testEnv.helpersContract.getReserveData(testEnv.allReserves[i]));
+    // console.log(await testEnv.helpersContract.getReserveConfigurationData(testEnv.allReserves[i]));
+  }
+
   /*
   testEnv.aave = await getMintableERC20(aaveAddress);
   testEnv.weth = await getWETHMocked(wethAddress);

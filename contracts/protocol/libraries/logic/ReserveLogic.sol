@@ -165,6 +165,7 @@ library ReserveLogic {
     DataTypes.ReserveData storage reserve,
     address asset,
     address aTokenAddress,
+    address pTokenAddress,
     address stableDebtTokenAddress,
     address variableDebtTokenAddress,
     address interestRateStrategyAddress,
@@ -175,6 +176,7 @@ library ReserveLogic {
     reserve.liquidityIndex = uint128(WadRayMath.ray());
     reserve.variableBorrowIndex = uint128(WadRayMath.ray());
     reserve.aTokenAddress = aTokenAddress;
+    reserve.pTokenAddress = pTokenAddress;
     reserve.stableDebtTokenAddress = stableDebtTokenAddress;
     reserve.variableDebtTokenAddress = variableDebtTokenAddress;
     reserve.interestRateStrategyAddress = interestRateStrategyAddress;
@@ -271,6 +273,8 @@ library ReserveLogic {
     reserve.currentLiquidityRate = depositRate;
     reserve.currentStableBorrowRate = borrowRate;
     reserve.currentVariableBorrowRate = borrowRate;
+
+    // reserve.liquidityIndex = 1029743763527958380640640224;
 
     emit ReserveDataUpdated(
       reserveAddress,
@@ -385,6 +389,7 @@ library ReserveLogic {
       require(newLiquidityIndex <= type(uint128).max, Errors.RL_LIQUIDITY_INDEX_OVERFLOW);
 
       reserve.liquidityIndex = uint128(newLiquidityIndex);
+      // reserve.liquidityIndex = 1029743763527958380640640224;
 
       //as the liquidity rate might come only from stable rate loans, we need to ensure
       //that there is actual variable debt before accumulating

@@ -16,6 +16,7 @@ import {PercentageMath} from '../libraries/math/PercentageMath.sol';
 import {DataTypes} from '../libraries/types/DataTypes.sol';
 import {IInitializableDebtToken} from '../../interfaces/IInitializableDebtToken.sol';
 import {IInitializableAToken} from '../../interfaces/IInitializableAToken.sol';
+import {IInitializablePToken} from '../../interfaces/IInitializablePToken.sol';
 import {IAaveIncentivesController} from '../../interfaces/IAaveIncentivesController.sol';
 import {ILendingPoolConfigurator} from '../../interfaces/ILendingPoolConfigurator.sol';
 
@@ -75,7 +76,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
           IInitializableAToken.initialize.selector,
           pool,
           input.treasury,
-          input.underlyingAsset,
+          input.project,
           IAaveIncentivesController(input.incentivesController),
           input.underlyingAssetDecimals,
           input.aTokenName,
@@ -83,7 +84,21 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
           input.params
         )
       );
-
+    address pTokenProxyAddress = 
+      _initTokenWithProxy(
+        input.aTokenImpl,
+        abi.encodeWithSelector(
+          IInitializablePToken.initialize.selector,
+          pool,
+          input.treasury,
+          input.project,
+          IAaveIncentivesController(input.incentivesController),
+          input.underlyingAssetDecimals,
+          input.pTokenName,
+          input.pTokenSymbol,
+          input.params
+        )
+      );
     address stableDebtTokenProxyAddress =
       _initTokenWithProxy(
         input.stableDebtTokenImpl,
@@ -118,6 +133,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
       input.project,
       input.underlyingAsset,
       aTokenProxyAddress,
+      pTokenProxyAddress,
       stableDebtTokenProxyAddress,
       variableDebtTokenProxyAddress,
       input.interestRateStrategyAddress,
@@ -137,6 +153,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
     emit ReserveInitialized(
       input.project,
       aTokenProxyAddress,
+      pTokenProxyAddress,
       stableDebtTokenProxyAddress,
       variableDebtTokenProxyAddress,
       input.interestRateStrategyAddress

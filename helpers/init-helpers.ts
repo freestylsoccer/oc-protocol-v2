@@ -46,6 +46,7 @@ export const initReservesByHelper = async (
 
   // CHUNK CONFIGURATION
   const initChunks = 1;
+  /*
 
   // Initialize variables for future reserves initialization
   let reserveSymbols: string[] = [];
@@ -161,6 +162,7 @@ export const initReservesByHelper = async (
     console.log(`  - Reserve ready for: ${chunkedSymbols[chunkIndex].join(', ')}`);
     console.log('    * gasUsed', tx3.gasUsed.toString());
   }
+  */
 };
 
 export const initReservesByHelper2 = async (
@@ -168,6 +170,7 @@ export const initReservesByHelper2 = async (
   tokenAddresses: { [symbol: string]: tEthereumAddress },
   projectAddresses: { [name: string]: tEthereumAddress },
   aTokenNamePrefix: string,
+  pTokenNamePrefix: string,
   stableDebtTokenNamePrefix: string,
   variableDebtTokenNamePrefix: string,
   symbolPrefix: string,
@@ -198,6 +201,8 @@ export const initReservesByHelper2 = async (
     underlyingAssetName: string;
     aTokenName: string;
     aTokenSymbol: string;
+    pTokenName: string;
+    pTokenSymbol: string;
     variableDebtTokenName: string;
     variableDebtTokenSymbol: string;
     stableDebtTokenName: string;
@@ -272,6 +277,7 @@ export const initReservesByHelper2 = async (
     }
     // console.log(await getATokenExtraParams(aTokenImpl, tokenAddresses[symbol]));
     // Prepare input parameters
+    // console.log(aTokenImpl);
     reserveSymbols.push(symbol);
     initInputParams.push({
       aTokenImpl: await getContractAddressWithJsonFallback(aTokenImpl, poolName),
@@ -291,16 +297,19 @@ export const initReservesByHelper2 = async (
       underlyingAssetName: symbol,
       aTokenName: `${aTokenNamePrefix} ${symbol}`,
       aTokenSymbol: `a${symbolPrefix}${symbol}`,
+      pTokenName: `${pTokenNamePrefix} ${symbol}`,
+      pTokenSymbol: `p${symbolPrefix}${symbol}`,
       variableDebtTokenName: `${variableDebtTokenNamePrefix} ${symbolPrefix}${symbol}`,
       variableDebtTokenSymbol: `variableDebt${symbolPrefix}${symbol}`,
       stableDebtTokenName: `${stableDebtTokenNamePrefix} ${symbol}`,
       stableDebtTokenSymbol: `stableDebt${symbolPrefix}${symbol}`,
       params: await getATokenExtraParams(aTokenImpl, tokenAddresses[symbol]),
+      // project: projectAddresses[`Project${symbol}`],
       project: projectAddresses[symbol],
       projectBorrower: projectBorrower,
-    });
+    });    
   }
-
+  // console.log(initInputParams);
   // Deploy init reserves per chunks
   const chunkedSymbols = chunk(reserveSymbols, initChunks);
   const chunkedInitInputParams = chunk(initInputParams, initChunks);
@@ -366,7 +375,7 @@ export const configureReservesByHelper = async (
     depositsEnabled: boolean;
     withdrawalsEnabled: boolean;
   }[] = [];
-
+/*
   for (const [
     assetSymbol,
     {
@@ -438,6 +447,7 @@ export const configureReservesByHelper = async (
     // Set deployer back as admin
     await waitForTx(await addressProvider.setPoolAdmin(admin));
   }
+  */
 };
 
 export const configureReservesByHelper2 = async (
@@ -491,9 +501,7 @@ export const configureReservesByHelper2 = async (
     const [, tokenAddress] = (Object.entries(projectAddresses) as [string, string][])[
       assetAddressIndex
     ];
-    const { usageAsCollateralEnabled: alreadyEnabled } = await helpers.getReserveConfigurationData(
-      tokenAddress
-    );
+    const alreadyEnabled = false;
 
     if (alreadyEnabled) {
       console.log(`- Reserve ${assetSymbol} is already enabled as collateral, skipping`);

@@ -71,6 +71,7 @@ export enum eContractid {
   MockFlashLoanReceiver = 'MockFlashLoanReceiver',
   WalletBalanceProvider = 'WalletBalanceProvider',
   AToken = 'AToken',
+  PToken = 'PToken',
   MockAToken = 'MockAToken',
   DelegationAwareAToken = 'DelegationAwareAToken',
   MockStableDebtToken = 'MockStableDebtToken',
@@ -405,7 +406,15 @@ export enum TokenContractId2 {
   BUSD = 'BUSD',
   USD = 'USD',
 }
-
+export enum ProjectContracId {
+  ProjectDAI = 'ProjectDAI',
+  ProjectTUSD = 'ProjectTUSD',
+  ProjectUSDC = 'ProjectUSDC',
+  ProjectUSDT = 'ProjectUSDT',
+  ProjectSUSD = 'ProjectSUSD',
+  ProjectBUSD = 'ProjectBUSD',
+  ProjectUSD = 'ProjectUSD',
+}
 export interface IReserveParams extends IReserveBorrowParams, IReserveCollateralParams {
   aTokenImpl: eContractid;
   reserveFactor: string;
@@ -530,6 +539,7 @@ export interface ILendingRate {
 export interface IBaseConfiguration {
   MarketId: string;
   ATokenNamePrefix: string;
+  PTokenNamePrefix: string;
   StableDebtTokenNamePrefix: string;
   VariableDebtTokenNamePrefix: string;
   SymbolPrefix: string;
@@ -601,4 +611,4 @@ export interface ITokenAddress {
   [token: string]: tEthereumAddress;
 }
 
-export type PoolConfiguration = ICommonConfiguration | IAaveConfiguration;
+export type PoolConfiguration = ICommonConfiguration | IAaveConfiguration | IPofiConfiguration;

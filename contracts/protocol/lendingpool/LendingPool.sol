@@ -8,6 +8,7 @@ import {SafeERC20} from '../../dependencies/openzeppelin/contracts/SafeERC20.sol
 import {Address} from '../../dependencies/openzeppelin/contracts/Address.sol';
 import {ILendingPoolAddressesProvider} from '../../interfaces/ILendingPoolAddressesProvider.sol';
 import {IAToken} from '../../interfaces/IAToken.sol';
+import {IPToken} from '../../interfaces/IPToken.sol';
 import {IVariableDebtToken} from '../../interfaces/IVariableDebtToken.sol';
 import {IStableDebtToken} from '../../interfaces/IStableDebtToken.sol';
 import {ILendingPool} from '../../interfaces/ILendingPool.sol';
@@ -111,12 +112,15 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     ValidationLogic.validateDeposit(reserve, amount);
 
     address aToken = reserve.aTokenAddress;
+    address pToken = reserve.pTokenAddress;
 
-    reserve.updateState();    
+    reserve.updateState();
 
     IERC20(asset).safeTransferFrom(msg.sender, aToken, amount);
 
     IAToken(aToken).mint(onBehalfOf, amount, reserve.liquidityIndex);
+
+    IPToken(pToken).mint(onBehalfOf, amount, reserve.liquidityIndex);
 
     emit Deposit(project, asset, msg.sender, onBehalfOf, amount);
   }
@@ -175,6 +179,54 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   }
 
   /**
+   * @dev Withdraws an `amount` of underlying asset from the reserve, burning the equivalent aTokens owned
+   * E.g. User has 100 aUSDC, calls withdraw() and receives 100 USDC, burning the 100 aUSDC
+   * @param project The address of the project contrat associated to the reserve
+   * @param asset The address of the underlying asset to withdraw
+   * @param amount The underlying amount to be withdrawn
+   *   - Send the value type(uint256).max in order to withdraw the whole aToken balance
+   * @param to Address that will receive the underlying, same as msg.sender if the user
+   *   wants to receive it on his own wallet, or a different address if the beneficiary is a
+   *   different wallet
+   * @return The final amount withdrawn
+   **/
+  function withdrawInterest(
+    address project,
+    address asset,
+    uint256 amount,
+    address to
+  ) external override whenNotPaused returns (uint256) {
+    DataTypes.ReserveData storage reserve = _reserves[project];
+
+    require(reserve.underlyingAsset == asset, Errors.LP_INVALID_ASSET);
+
+    address pToken = reserve.pTokenAddress;
+
+    uint256 userBalance = IPToken(pToken).balanceOf(msg.sender);
+
+    uint256 amountToWithdraw = amount;
+
+    if (amount == type(uint256).max) {
+      amountToWithdraw = userBalance;
+    }
+
+    ValidationLogic.validateWithdraw(
+      project,
+      amountToWithdraw,
+      userBalance,
+      _reserves
+    );
+
+    reserve.updateState();
+
+    IPToken(pToken).burn(msg.sender, to, amountToWithdraw, reserve.liquidityIndex);
+
+    emit WithdrawInterest(project, msg.sender, to, amountToWithdraw);
+
+    return amountToWithdraw;
+  }
+
+  /**
    * @dev Allows users to borrow a specific `amount` of the reserve underlying asset, provided that the borrower
    * already deposited enough collateral, or he was given enough allowance by a credit delegator on the
    * corresponding debt token (StableDebtToken or VariableDebtToken)
@@ -228,7 +280,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     uint256 amount,
     address onBehalfOf
   ) external override whenNotPaused returns (uint256) {
-    DataTypes.ReserveData storage reserve = _reserves[asset];
+    DataTypes.ReserveData storage reserve = _reserves[project];
 
     require(reserve.underlyingAsset == asset, Errors.LP_INVALID_ASSET);
 
@@ -449,6 +501,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address project,
     address asset,
     address aTokenAddress,
+    address pTokenAddress,
     address stableDebtAddress,
     address variableDebtAddress,
     address interestRateStrategyAddress,
@@ -459,6 +512,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     _reserves[project].init(
       asset,
       aTokenAddress,
+      pTokenAddress,
       stableDebtAddress,
       variableDebtAddress,
       interestRateStrategyAddress,
@@ -580,6 +634,10 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
   function getUnderlyingAsset(address project) external view override returns (address asset) {
     return _reserves[project].underlyingAsset;
+  }
+
+  function getATokenAddress(address project) external view override returns (address atoken) {
+    return _reserves[project].aTokenAddress;
   }
 
   function updateProjectBorrower(

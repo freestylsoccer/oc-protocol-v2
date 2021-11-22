@@ -72,13 +72,10 @@ contract AaveProtocolDataProvider {
     view
     returns (
       uint256 decimals,
-      uint256 ltv,
-      uint256 liquidationThreshold,
-      uint256 liquidationBonus,
       uint256 reserveFactor,
-      bool usageAsCollateralEnabled,
       bool borrowingEnabled,
-      bool stableBorrowRateEnabled,
+      bool depositsEnabled,
+      bool withdrawalsEnabled,
       bool isActive,
       bool isFrozen
     )
@@ -86,28 +83,26 @@ contract AaveProtocolDataProvider {
     DataTypes.ReserveConfigurationMap memory configuration =
       ILendingPool(ADDRESSES_PROVIDER.getLendingPool()).getConfiguration(asset);
 
-    (ltv, liquidationThreshold, liquidationBonus, decimals, reserveFactor) = configuration
+    (, , , decimals, reserveFactor) = configuration
       .getParamsMemory();
 
-    (isActive, isFrozen, borrowingEnabled, stableBorrowRateEnabled) = configuration
+    (isActive, isFrozen, borrowingEnabled, , depositsEnabled, withdrawalsEnabled) = configuration
       .getFlagsMemory();
 
-    usageAsCollateralEnabled = liquidationThreshold > 0;
+    // usageAsCollateralEnabled = liquidationThreshold > 0;
   }
 
   function getReserveData(address asset)
     external
     view
     returns (
+      address underlyingAsset,
+      address projectBorrower,
       uint256 availableLiquidity,
       uint256 totalStableDebt,
-      uint256 totalVariableDebt,
       uint256 liquidityRate,
-      uint256 variableBorrowRate,
       uint256 stableBorrowRate,
-      uint256 averageStableBorrowRate,
       uint256 liquidityIndex,
-      uint256 variableBorrowIndex,
       uint40 lastUpdateTimestamp
     )
   {
@@ -115,16 +110,18 @@ contract AaveProtocolDataProvider {
       ILendingPool(ADDRESSES_PROVIDER.getLendingPool()).getReserveData(asset);
 
     return (
+      reserve.underlyingAsset,
+      reserve.projectBorrower,
       IERC20Detailed(reserve.underlyingAsset).balanceOf(reserve.aTokenAddress),
       IERC20Detailed(reserve.stableDebtTokenAddress).totalSupply(),
-      IERC20Detailed(reserve.variableDebtTokenAddress).totalSupply(),
+      // IERC20Detailed(reserve.variableDebtTokenAddress).totalSupply(),
       reserve.currentLiquidityRate,
-      reserve.currentVariableBorrowRate,
+      // reserve.currentVariableBorrowRate,
       reserve.currentStableBorrowRate,
-      IStableDebtToken(reserve.stableDebtTokenAddress).getAverageStableRate(),
+      // IStableDebtToken(reserve.stableDebtTokenAddress).getAverageStableRate(),
       reserve.liquidityIndex,
-      reserve.variableBorrowIndex,
-      reserve.lastUpdateTimestamp
+      //reserve.variableBorrowIndex,
+      reserve.lastUpdateTimestamp      
     );
   }
 

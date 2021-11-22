@@ -359,6 +359,8 @@ library ReserveConfiguration {
       bool,
       bool,
       bool,
+      bool,
+      bool,
       bool
     )
   {
@@ -366,7 +368,9 @@ library ReserveConfiguration {
       (self.data & ~ACTIVE_MASK) != 0,
       (self.data & ~FROZEN_MASK) != 0,
       (self.data & ~BORROWING_MASK) != 0,
-      (self.data & ~STABLE_BORROWING_MASK) != 0
+      (self.data & ~STABLE_BORROWING_MASK) != 0,
+      (self.data & ~DESPOSITS_MASK) != 0,
+      (self.data & ~WITHDRAWALS_MASK) != 0
     );
   }  
 

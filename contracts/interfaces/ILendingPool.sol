@@ -32,6 +32,15 @@ interface ILendingPool {
   event Withdraw(address indexed reserve, address indexed user, address indexed to, uint256 amount);
 
   /**
+   * @dev Emitted on withdraw()
+   * @param reserve The address of the underlyng asset being withdrawn
+   * @param user The address initiating the withdrawal, owner of aTokens
+   * @param to Address that will receive the underlying
+   * @param amount The amount to be withdrawn
+   **/
+  event WithdrawInterest(address indexed reserve, address indexed user, address indexed to, uint256 amount);
+
+  /**
    * @dev Emitted on borrow() and flashLoan() when debt needs to be opened
    * @param project The address of the project contrat associated to the reserve
    * @param asset The address of the underlying asset being borrowed
@@ -204,6 +213,25 @@ interface ILendingPool {
   ) external returns (uint256);
 
   /**
+   * @dev Withdraws an `amount` of underlying asset from the reserve, burning the equivalent aTokens owned
+   * E.g. User has 100 aUSDC, calls withdraw() and receives 100 USDC, burning the 100 aUSDC
+   * @param project The address of the project contrat associated to the reserve
+   * @param asset The address of the underlying asset to withdraw
+   * @param amount The underlying amount to be withdrawn
+   *   - Send the value type(uint256).max in order to withdraw the whole aToken balance
+   * @param to Address that will receive the underlying, same as msg.sender if the user
+   *   wants to receive it on his own wallet, or a different address if the beneficiary is a
+   *   different wallet
+   * @return The final amount withdrawn
+   **/
+  function withdrawInterest(
+    address project,
+    address asset,
+    uint256 amount,
+    address to
+  ) external returns (uint256);
+
+  /**
    * @dev Allows users to borrow a specific `amount` of the reserve underlying asset, provided that the borrower
    * already deposited enough collateral, or he was given enough allowance by a credit delegator on the
    * corresponding debt token (StableDebtToken or VariableDebtToken)
@@ -246,6 +274,7 @@ interface ILendingPool {
     address project,
     address reserve,
     address aTokenAddress,
+    address pTokenAddress,
     address stableDebtAddress,
     address variableDebtAddress,
     address interestRateStrategyAddress,
@@ -316,6 +345,8 @@ interface ILendingPool {
   function paused() external view returns (bool);
 
   function getUnderlyingAsset(address project) external view returns (address asset);
+
+  function getATokenAddress(address project) external view returns (address atoken);
 
   function updateProjectBorrower (address project, address projectBorrower) external;
 

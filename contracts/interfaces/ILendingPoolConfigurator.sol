@@ -17,6 +17,8 @@ interface ILendingPoolConfigurator {
     string underlyingAssetName;
     string aTokenName;
     string aTokenSymbol;
+    string pTokenName;
+    string pTokenSymbol;
     string variableDebtTokenName;
     string variableDebtTokenSymbol;
     string stableDebtTokenName;
@@ -54,6 +56,7 @@ interface ILendingPoolConfigurator {
   event ReserveInitialized(
     address indexed asset,
     address indexed aToken,
+    address indexed pToken,
     address stableDebtToken,
     address variableDebtToken,
     address interestRateStrategyAddress

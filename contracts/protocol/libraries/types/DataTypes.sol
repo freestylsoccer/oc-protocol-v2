@@ -29,6 +29,7 @@ library DataTypes {
     address underlyingAsset;
     // project borrower of the project
     address projectBorrower;
+    address pTokenAddress;
   }
 
   struct ReserveConfigurationMap {

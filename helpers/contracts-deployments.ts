@@ -6,6 +6,7 @@ import {
   tStringTokenSmallUnits,
   AavePools,
   TokenContractId,
+  TokenContractId2,
   iMultiPoolsAssets,
   IReserveParams,
   PoolConfiguration,
@@ -463,12 +464,31 @@ export const deployDelegationAwareATokenImpl = async (verify: boolean) =>
     verify
   );
 
+export const deployAllMockProjects = async (verify?: boolean) => {
+  const tokens: { [symbol: string]: Project } = {};
+
+  for (const tokenSymbol of Object.keys(TokenContractId2)) {
+    let name = "Project" + tokenSymbol;
+    let startDate = "1635704185";
+    let endDate = "1640974585";    
+
+    tokens[tokenSymbol] = await deployMockProjects([
+      name,
+      startDate,
+      endDate,
+    ]);
+    await registerContractInJsonDb(name, tokens[tokenSymbol]);
+  }
+
+  return tokens;
+};
+
 export const deployAllMockTokens = async (verify?: boolean) => {
   const tokens: { [symbol: string]: MockContract | MintableERC20 } = {};
 
   const protoConfigData = getReservesConfigByPool(AavePools.proto);
 
-  for (const tokenSymbol of Object.keys(TokenContractId)) {
+  for (const tokenSymbol of Object.keys(TokenContractId2)) {
     let decimals = '18';
 
     let configData = (<any>protoConfigData)[tokenSymbol];
@@ -680,12 +700,73 @@ export const deployATokenImplementations = async (
       return acc;
     }, new Set<eContractid>()),
   ];
+  console.log(aTokenImplementations);
 
   for (let x = 0; x < aTokenImplementations.length; x++) {
     const aTokenAddress = getOptionalParamAddressPerNetwork(
       poolConfig[aTokenImplementations[x].toString()],
       network
     );
+
+    if (!notFalsyOrZeroAddress(aTokenAddress)) {
+      const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);      
+      console.log(`Deploying implementation`, aTokenImplementations[x]);
+      await deployImplementationMethod(verify);
+    }
+  }
+  /*
+  const pTokenAddress = getOptionalParamAddressPerNetwork(
+    poolConfig['PToken'],
+    network
+  );
+
+  if (!notFalsyOrZeroAddress(pTokenAddress)) {
+    const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);      
+    console.log(`Deploying implementation`, 'PToken');
+    await deployImplementationMethod(verify);
+  }
+  */
+  // Debt tokens, for now all Market configs follows same implementations
+  const genericStableDebtTokenAddress = getOptionalParamAddressPerNetwork(
+    poolConfig.StableDebtTokenImplementation,
+    network
+  );
+  const geneticVariableDebtTokenAddress = getOptionalParamAddressPerNetwork(
+    poolConfig.VariableDebtTokenImplementation,
+    network
+  );
+
+  if (!notFalsyOrZeroAddress(genericStableDebtTokenAddress)) {
+    await deployGenericStableDebtToken(verify);
+  }
+  if (!notFalsyOrZeroAddress(geneticVariableDebtTokenAddress)) {
+    await deployGenericVariableDebtToken(verify);
+  }
+};
+
+export const deployPTokenImplementations = async (
+  pool: ConfigNames,
+  reservesConfig: { [key: string]: IReserveParams },
+  verify = false
+) => {
+  const poolConfig = loadPoolConfig(pool);
+  const network = <eNetwork>DRE.network.name;
+
+  // Obtain the different AToken implementations of all reserves inside the Market config
+  const aTokenImplementations = [
+    ...Object.entries(reservesConfig).reduce<Set<eContractid>>((acc, [, entry]) => {
+      acc.add(entry.aTokenImpl);
+      return acc;
+    }, new Set<eContractid>()),
+  ];
+  console.log(aTokenImplementations);
+
+  for (let x = 0; x < aTokenImplementations.length; x++) {
+    const aTokenAddress = getOptionalParamAddressPerNetwork(
+      poolConfig[aTokenImplementations[x].toString()],
+      network
+    );
+    console.log(aTokenAddress);
     if (!notFalsyOrZeroAddress(aTokenAddress)) {
       const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);
       console.log(`Deploying implementation`, aTokenImplementations[x]);

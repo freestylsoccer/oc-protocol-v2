@@ -177,7 +177,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   );
 
   // Deploy deployment helpers
-  // await deployStableAndVariableTokensHelper([lendingPoolProxy.address, addressesProvider.address]);
+  await deployStableAndVariableTokensHelper([lendingPoolProxy.address, addressesProvider.address]);
   await deployATokensAndRatesHelper([
     lendingPoolProxy.address,
     addressesProvider.address,
@@ -217,7 +217,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
     }),
     {}
   );
-
+  // console.log(allProjectAddresses)
   /*
   const allAggregatorsAddresses = Object.entries(mockAggregators).reduce(
     (accum: { [tokenSymbol: string]: tEthereumAddress }, [tokenSymbol, aggregator]) => ({
@@ -266,11 +266,11 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
 
   const testHelpers = await deployAaveProtocolDataProvider(addressesProvider.address);
 
-  await deployATokenImplementations(ConfigNames.Aave, reservesParams, false);
-
+  await deployATokenImplementations(ConfigNames.Pofi, reservesParams, false);
+  
   const admin = await deployer.getAddress();
 
-  const { ATokenNamePrefix, StableDebtTokenNamePrefix, VariableDebtTokenNamePrefix, SymbolPrefix } =
+  const { ATokenNamePrefix, PTokenNamePrefix, StableDebtTokenNamePrefix, VariableDebtTokenNamePrefix, SymbolPrefix } =
     config;
   const treasuryAddress = await getTreasuryAddress(config);
   
@@ -279,6 +279,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
     allReservesAddresses,
     allProjectAddresses,
     ATokenNamePrefix,
+    PTokenNamePrefix,
     StableDebtTokenNamePrefix,
     VariableDebtTokenNamePrefix,
     SymbolPrefix,

@@ -13,6 +13,7 @@ import { ICommonConfiguration2, eEthereumNetwork } from '../../helpers/types';
 export const CommonsConfig: ICommonConfiguration2 = {
   MarketId: 'Commons',
   ATokenNamePrefix: 'Pofi interest bearing',
+  PTokenNamePrefix: 'Pofi interest bearing 2',
   StableDebtTokenNamePrefix: 'Pofi stable debt bearing',
   VariableDebtTokenNamePrefix: 'Pofi variable debt bearing',
   SymbolPrefix: '',

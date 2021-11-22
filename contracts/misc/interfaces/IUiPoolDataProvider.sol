@@ -18,6 +18,8 @@ interface IUiPoolDataProvider {
     bool usageAsCollateralEnabled;
     bool borrowingEnabled;
     bool stableBorrowRateEnabled;
+    bool depositsEnabled;
+    bool withdrawalsEnabled;
     bool isActive;
     bool isFrozen;
     // base data

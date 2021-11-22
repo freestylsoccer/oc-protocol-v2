@@ -123,7 +123,9 @@ contract UiPoolDataProvider is IUiPoolDataProvider {
         reserveData.isActive,
         reserveData.isFrozen,
         reserveData.borrowingEnabled,
-        reserveData.stableBorrowRateEnabled
+        reserveData.stableBorrowRateEnabled,
+        reserveData.depositsEnabled,
+        reserveData.withdrawalsEnabled
       ) = baseData.configuration.getFlagsMemory();
       reserveData.usageAsCollateralEnabled = reserveData.baseLTVasCollateral != 0;
       (
@@ -297,7 +299,9 @@ contract UiPoolDataProvider is IUiPoolDataProvider {
         reserveData.isActive,
         reserveData.isFrozen,
         reserveData.borrowingEnabled,
-        reserveData.stableBorrowRateEnabled
+        reserveData.stableBorrowRateEnabled,
+        reserveData.depositsEnabled,
+        reserveData.withdrawalsEnabled
       ) = baseData.configuration.getFlagsMemory();
       reserveData.usageAsCollateralEnabled = reserveData.baseLTVasCollateral != 0;
       (
