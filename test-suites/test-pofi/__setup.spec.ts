@@ -31,6 +31,7 @@ import {
   deployParaSwapLiquiditySwapAdapter,
   authorizeWETHGateway,
   deployATokenImplementations,
+  deployPTokenImplementations,
   deployAaveOracle,
   deployMockProjects
 } from '../../helpers/contracts-deployments';
@@ -107,7 +108,7 @@ const deployProjects = async (deployer: Signer) => {
   for (const tokenSymbol of Object.keys(TokenContractId2)) {
     let name = "Project" + tokenSymbol;
     let startDate = "1635704185";
-    let endDate = "1640974585";    
+    let endDate = "1640974585";
 
     tokens[tokenSymbol] = await deployMockProjects([
       name,
@@ -124,14 +125,14 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   console.time('setup');
   console.log('building Test Env');
   const aaveAdmin = await deployer.getAddress();
-  const config = loadPoolConfig(ConfigNames.Pofi);  
+  const config = loadPoolConfig(ConfigNames.Pofi);
 
   const mockProject: {
     [symbol: string]: Project;
   } = {
     ...(await deployProjects(deployer)),
   };
-  
+
   const mockTokens: {
     [symbol: string]: MockContract | MintableERC20 | WETH9Mocked;
   } = {
@@ -162,7 +163,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   const lendingPoolProxy = await getLendingPool(lendingPoolAddress);
 
   await insertContractAddressInDb(eContractid.LendingPool, lendingPoolProxy.address);
-  
+
   // oracle removed
   const lendingPoolConfiguratorImpl = await deployLendingPoolConfigurator();
   await waitForTx(
@@ -267,13 +268,14 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   const testHelpers = await deployAaveProtocolDataProvider(addressesProvider.address);
 
   await deployATokenImplementations(ConfigNames.Pofi, reservesParams, false);
-  
+  await deployPTokenImplementations(ConfigNames.Pofi, reservesParams, false);
+
   const admin = await deployer.getAddress();
 
   const { ATokenNamePrefix, PTokenNamePrefix, StableDebtTokenNamePrefix, VariableDebtTokenNamePrefix, SymbolPrefix } =
     config;
   const treasuryAddress = await getTreasuryAddress(config);
-  
+
   await initReservesByHelper2(
     reservesParams,
     allReservesAddresses,
@@ -286,7 +288,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
     admin,
     treasuryAddress,
     ZERO_ADDRESS,
-    ConfigNames.Aave,    
+    ConfigNames.Aave,
     false,
     "0x596EAE53961A7dc0A82a322F87D11028142c7c54"
   );
@@ -297,7 +299,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   await waitForTx(
     await addressesProvider.setLendingPoolCollateralManager(collateralManager.address)
   );
-  
+
   await deployMockFlashLoanReceiver(addressesProvider.address);
 
   const mockUniswapRouter = await deployMockUniswapRouter();
@@ -322,7 +324,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   await deployWalletBalancerProvider();
 
   // const gateWay = await deployWETHGateway([mockTokens.WETH.address]);
-  // await authorizeWETHGateway(gateWay.address, lendingPoolAddress);  
+  // await authorizeWETHGateway(gateWay.address, lendingPoolAddress);
 
   console.timeEnd('setup');
 };

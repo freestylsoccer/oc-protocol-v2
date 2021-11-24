@@ -20,6 +20,7 @@ import { getFirstSigner } from './contracts-getters';
 import {
   AaveProtocolDataProviderFactory,
   ATokenFactory,
+  PTokenFactory,
   ATokensAndRatesHelperFactory,
   AaveOracleFactory,
   DefaultReserveInterestRateStrategyFactory,
@@ -424,6 +425,15 @@ export const deployGenericATokenImpl = async (verify: boolean) =>
     verify
   );
 
+export const deployGenericPTokenImpl = async (verify: boolean) =>
+  withSaveAndVerify(
+    await new PTokenFactory(await getFirstSigner()).deploy(),
+    eContractid.PToken,
+    [],
+    verify
+  );
+
+
 export const deployDelegationAwareAToken = async (
   [pool, underlyingAssetAddress, treasuryAddress, incentivesController, name, symbol]: [
     tEthereumAddress,
@@ -470,7 +480,7 @@ export const deployAllMockProjects = async (verify?: boolean) => {
   for (const tokenSymbol of Object.keys(TokenContractId2)) {
     let name = "Project" + tokenSymbol;
     let startDate = "1635704185";
-    let endDate = "1640974585";    
+    let endDate = "1640974585";
 
     tokens[tokenSymbol] = await deployMockProjects([
       name,
@@ -685,6 +695,17 @@ export const chooseATokenDeployment = (id: eContractid) => {
   }
 };
 
+export const choosePTokenDeployment = (id: eContractid) => {
+  switch (id) {
+    case eContractid.PToken:
+      return deployGenericPTokenImpl;
+    case eContractid.DelegationAwareAToken:
+      return deployDelegationAwareATokenImpl;
+    default:
+      throw Error(`Missing aToken implementation deployment script for: ${id}`);
+  }
+};
+
 export const deployATokenImplementations = async (
   pool: ConfigNames,
   reservesConfig: { [key: string]: IReserveParams },
@@ -700,7 +721,7 @@ export const deployATokenImplementations = async (
       return acc;
     }, new Set<eContractid>()),
   ];
-  console.log(aTokenImplementations);
+  // console.log(aTokenImplementations);
 
   for (let x = 0; x < aTokenImplementations.length; x++) {
     const aTokenAddress = getOptionalParamAddressPerNetwork(
@@ -709,7 +730,7 @@ export const deployATokenImplementations = async (
     );
 
     if (!notFalsyOrZeroAddress(aTokenAddress)) {
-      const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);      
+      const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);
       console.log(`Deploying implementation`, aTokenImplementations[x]);
       await deployImplementationMethod(verify);
     }
@@ -721,7 +742,7 @@ export const deployATokenImplementations = async (
   );
 
   if (!notFalsyOrZeroAddress(pTokenAddress)) {
-    const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);      
+    const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);
     console.log(`Deploying implementation`, 'PToken');
     await deployImplementationMethod(verify);
   }
@@ -751,24 +772,24 @@ export const deployPTokenImplementations = async (
 ) => {
   const poolConfig = loadPoolConfig(pool);
   const network = <eNetwork>DRE.network.name;
-
+  // console.log(reservesConfig);
   // Obtain the different AToken implementations of all reserves inside the Market config
   const aTokenImplementations = [
     ...Object.entries(reservesConfig).reduce<Set<eContractid>>((acc, [, entry]) => {
-      acc.add(entry.aTokenImpl);
+      acc.add(entry.pTokenImpl);
       return acc;
     }, new Set<eContractid>()),
   ];
-  console.log(aTokenImplementations);
+  // console.log(aTokenImplementations);
 
   for (let x = 0; x < aTokenImplementations.length; x++) {
     const aTokenAddress = getOptionalParamAddressPerNetwork(
       poolConfig[aTokenImplementations[x].toString()],
       network
     );
-    console.log(aTokenAddress);
+    // console.log(aTokenAddress);
     if (!notFalsyOrZeroAddress(aTokenAddress)) {
-      const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);
+      const deployImplementationMethod = choosePTokenDeployment(aTokenImplementations[x]);
       console.log(`Deploying implementation`, aTokenImplementations[x]);
       await deployImplementationMethod(verify);
     }

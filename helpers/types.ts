@@ -417,6 +417,7 @@ export enum ProjectContracId {
 }
 export interface IReserveParams extends IReserveBorrowParams, IReserveCollateralParams {
   aTokenImpl: eContractid;
+  pTokenImpl: eContractid;
   reserveFactor: string;
   strategy: IInterestRateStrategyParams;
 }

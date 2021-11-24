@@ -5,6 +5,7 @@ pragma experimental ABIEncoderV2;
 interface ILendingPoolConfigurator {
   struct InitReserveInput {
     address aTokenImpl;
+    address pTokenImpl;
     address stableDebtTokenImpl;
     address variableDebtTokenImpl;
     uint8 underlyingAssetDecimals;

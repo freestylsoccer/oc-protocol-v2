@@ -84,9 +84,9 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
           input.params
         )
       );
-    address pTokenProxyAddress = 
+    address pTokenProxyAddress =
       _initTokenWithProxy(
-        input.aTokenImpl,
+        input.pTokenImpl,
         abi.encodeWithSelector(
           IInitializablePToken.initialize.selector,
           pool,
@@ -198,7 +198,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
     ILendingPool cachedPool = pool;
 
     DataTypes.ReserveData memory reserveData = cachedPool.getReserveData(input.asset);
-     
+
     (, , , uint256 decimals, ) = cachedPool.getConfiguration(input.asset).getParamsMemory();
 
     bytes memory encodedCall = abi.encodeWithSelector(

@@ -23,7 +23,7 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
   before(async () => {
     // _mockFlashLoanReceiver = await getMockFlashLoanReceiver();
   });
-  
+
   it('Deposit', async () => {
     const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
 
@@ -42,11 +42,11 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    console.log(await pool.getReserveNormalizedIncome(allReserves[1])); 
+    console.log(await pool.getReserveNormalizedIncome(allReserves[1]));
 
     let balance = await aDai.balanceOf(users[1].address);
     console.log(balance);
-    
+
     console.log('pToken balance:')
     console.log(await pToken.balanceOf(users[1].address))
 
@@ -58,9 +58,9 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     // console.log(await pool.getReserveData(allReserves[1]));
     await configurator.updateReserveRates(allReserves[1], "149836137868559762747440042", "63644321225180017306639757");
     // console.log(await helpersContract.getReserveData(allReserves[1]));
-    console.log(await pool.getReserveNormalizedIncome(allReserves[1])); 
+    console.log(await pool.getReserveNormalizedIncome(allReserves[1]));
     // console.log(await helpersContract.getReserveData(allReserves[4]));
-    // await configurator.updateReserveRates(allReserves[4], "149836137868559762747440042", "63644321225180017306639757"); 
+    // await configurator.updateReserveRates(allReserves[4], "149836137868559762747440042", "63644321225180017306639757");
     // console.log(await helpersContract.getReserveData(allReserves[4]));
     // console.log(await pool.getReserveNormalizedIncome(allReserves[4]));
     let balance = await aDai.balanceOf(users[1].address);
@@ -85,10 +85,10 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    await timeout(60000)
+    // await timeout(60000)
 
-    console.log(await pool.getReserveNormalizedIncome(allReserves[1])); 
-    
+    console.log(await pool.getReserveNormalizedIncome(allReserves[1]));
+
     console.log(await aDai.balanceOf(users[2].address));
 
     console.log('Balance user 1:');
@@ -113,10 +113,10 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     // console.log(await dai.balanceOf(aDai.address));
     // console.log(await pool.getReserveData(allReserves[1]));
     // console.log(await aDai.getIncentivesController());
-    console.log(await pool.getReserveNormalizedIncome(allReserves[1])); 
+    console.log(await pool.getReserveNormalizedIncome(allReserves[1]));
 
     console.log(await aDai.balanceOf(users[3].address));
-    
+
     console.log('Balance user 1:');
     let balance = await aDai.balanceOf(users[1].address);
     console.log(balance);
@@ -135,7 +135,7 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     const balance = await aDai.balanceOf(users[0].address);
     // console.log(balance);
     const daiBalance = await dai.balanceOf(users[0].address);
-    
+
     await expect(daiBalance).to.be.equal("0x3635c9adc5dea00000");
     await expect(balance).to.be.equal("0x00");
   });
@@ -163,14 +163,14 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
 
     // console.log(await aDai.getIncentivesController());
     const balance = await dai.balanceOf(users[3].address);
-        
+
     await expect(balance).to.be.equal("0x3635c9adc5dea00000");
 
     await configurator.disableBorrowingOnReserve(allReserves[1]);
 
     const stableDebtBalance = await stableDebToken.connect(users[3].signer).balanceOf(users[3].address);
     const variableDebtBalance = await variableDebToken.connect(users[3].signer).balanceOf(users[3].address);
-    
+
     // await expect(stableDebtBalance).to.be.equal("0x3635c9adc5dea00000");
     await expect(variableDebtBalance).to.be.equal("0x00");
   });
@@ -186,20 +186,20 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
 
     // console.log(await aDai.getIncentivesController());
     let balance = await dai.balanceOf(users[3].address);
-        
+
     await expect(balance).to.be.equal(amountDAItoRepay);
-    
+
     let stableDebtBalance = await stableDebToken.connect(users[3].signer).balanceOf(users[3].address);
     let variableDebtBalance = await variableDebToken.connect(users[3].signer).balanceOf(users[3].address);
-    
+
     // await expect(stableDebtBalance).to.be.equal(amountDAItoRepay);
     await expect(variableDebtBalance).to.be.equal("0x00");
-    
+
     await pool.connect(users[3].signer).repay(allReserves[1], dai.address, amountDAItoRepay, users[3].address);
 
     // console.log(await aDai.getIncentivesController());
     balance = await dai.balanceOf(users[3].address);
-        
+
     await expect(balance).to.be.equal("0x00");
 
     stableDebtBalance = await stableDebToken.connect(users[3].signer).balanceOf(users[3].address);
@@ -208,11 +208,11 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     // await expect(stableDebtBalance).to.be.equal("0x00");
     await expect(variableDebtBalance).to.be.equal("0x00");
 
-  });  
+  });
 
   it('Check a token balance after rates updated ', async () => {
     const { users, pool, dai, stableDebToken, variableDebToken, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
-    
+
     function timeout(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -228,10 +228,10 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     // console.log(await helpersContract.getReserveConfigurationData(allReserves[1]));
 
     await pool.connect(users[5].signer).deposit(allReserves[1], dai.address, "0x3635c9adc5dea00000", users[5].address);
-    
+
     const balance = await aDai.balanceOf(users[5].address);
     console.log(balance);
-    
+
     const balanceP = await pToken.balanceOf(users[5].address);
     console.log(balanceP);
 
@@ -252,7 +252,7 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
 
     // user 0 deposits 1000 DAI
     await dai.connect(users[0].signer).approve(pool.address, APPROVAL_AMOUNT_LENDING_POOL);
-    
+
     await pool.connect(users[0].signer).deposit(allReserves[1], dai.address, "0x3635c9adc5dea00000", users[0].address);
     await pool.connect(users[1].signer).borrow(allReserves[1], dai.address, "0x3635c9adc5dea00000", users[1].address);
 
