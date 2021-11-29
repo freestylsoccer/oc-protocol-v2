@@ -60,6 +60,8 @@ interface IAToken is IERC20, IScaledBalanceToken, IInitializableAToken {
     uint256 index
   ) external;
 
+  function payInterest(address user, address underlyingAsset, address receiverOfUnderlying, uint256 amount) external;
+
   /**
    * @dev Mints aTokens to the reserve treasury
    * @param amount The amount of tokens getting minted

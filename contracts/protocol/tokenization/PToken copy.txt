@@ -130,12 +130,11 @@ contract PToken is
   ) external override onlyLendingPool {
     uint256 amountScaled = amount.rayDiv(index);
     require(amountScaled != 0, Errors.CT_INVALID_BURN_AMOUNT);
-    _burn(user, amountScaled);
-
+    _burn(user, amount);
     _underlyingAsset = _pool.getUnderlyingAsset(_project);
+
     address aTokenAddress = _pool.getATokenAddress(_project);
     IAToken(aTokenAddress).payInterest(user, _underlyingAsset, receiverOfUnderlying, amount);
-
     emit Burn(user, receiverOfUnderlying, amount, index);
   }
 
@@ -157,6 +156,7 @@ contract PToken is
     uint256 amountScaled = amount.rayDiv(index);
     require(amountScaled != 0, Errors.CT_INVALID_MINT_AMOUNT);
     _mint(user, amountScaled);
+    // _burn(user, amountScaled);
 
     emit Transfer(address(0), user, amount);
     emit Mint(user, amount, index);
@@ -176,6 +176,16 @@ contract PToken is
     }
 
     address treasury = _treasury;
+
+    ILendingPool pool = _pool;
+    address aTokenAddress = pool.getATokenAddress(_project);
+
+    // uint256 aTokenSupply = IAToken(aTokenAddress).totalSupply();
+    // uint256 pTokenSupply = aTokenSupply.rayMul(_pool.getReserveNormalizedIncome(_project));
+    // uint256 currentSupplyScaled = super.totalSupply();
+
+    // uint256 rigthAmount = pTokenSupply.sub(aTokenSupply);
+    // uint256 amt = rigthAmount.sub(currentSupplyScaled);
 
     // Compared to the normal mint, we don't check for rounding errors.
     // The amount to mint can easily be very small since it is a fraction of the interest ccrued.
@@ -217,7 +227,16 @@ contract PToken is
     override(IncentivizedERC20, IERC20)
     returns (uint256)
   {
-    return super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_project));
+    ILendingPool pool = _pool;
+
+    address aTokenAddress = pool.getATokenAddress(_project);
+    uint256 aTokenBalance = IAToken(aTokenAddress).balanceOf(user);
+
+    // uint256 pTokenBalance = aTokenBalance.rayMul(_pool.getReserveNormalizedIncome(_project));
+    uint256 pTokenBalance = super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_project));
+
+    // return pTokenBalance.sub(aTokenBalance);
+    return pTokenBalance;
   }
 
   /**
@@ -259,6 +278,14 @@ contract PToken is
     }
 
     return currentSupplyScaled.rayMul(_pool.getReserveNormalizedIncome(_project));
+
+    // ILendingPool pool = _pool;
+    // address aTokenAddress = pool.getATokenAddress(_project);
+
+    // uint256 aTokenSupply = IAToken(aTokenAddress).totalSupply();
+    // uint256 pTokenSupply = aTokenSupply.rayMul(_pool.getReserveNormalizedIncome(_project));
+
+    // return currentSupplyScaled.sub(aTokenSupply);
   }
 
   /**

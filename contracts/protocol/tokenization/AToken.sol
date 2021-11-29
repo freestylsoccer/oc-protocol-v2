@@ -47,7 +47,10 @@ contract AToken is
     require(_msgSender() == address(_pool), Errors.CT_CALLER_MUST_BE_LENDING_POOL);
     _;
   }
-
+  modifier onlyPToken {
+    require(_msgSender() == address(_pool.getPTokenAddress(_project)), Errors.CT_CALLER_MUST_BE_LENDING_POOL);
+    _;
+  }
   function getRevision() internal pure virtual override returns (uint256) {
     return ATOKEN_REVISION;
   }
@@ -103,7 +106,7 @@ contract AToken is
       _underlyingAsset,
       address(_pool),
       treasury,
-      address(incentivesController),  
+      address(incentivesController),
       aTokenDecimals,
       aTokenName,
       aTokenSymbol,
@@ -133,6 +136,12 @@ contract AToken is
 
     emit Transfer(user, address(0), amount);
     emit Burn(user, receiverOfUnderlying, amount, index);
+  }
+
+  function payInterest(address user, address underlyingAsset, address receiverOfUnderlying, uint256 amount) external override onlyPToken {
+    IERC20(underlyingAsset).safeTransfer(receiverOfUnderlying, amount);
+
+    emit Transfer(user, address(0), amount);
   }
 
   /**
@@ -213,7 +222,8 @@ contract AToken is
     override(IncentivizedERC20, IERC20)
     returns (uint256)
   {
-    return super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_project));
+    // return super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_project));
+    return super.balanceOf(user);
   }
 
   /**
@@ -254,7 +264,8 @@ contract AToken is
       return 0;
     }
 
-    return currentSupplyScaled.rayMul(_pool.getReserveNormalizedIncome(_project));
+    // return currentSupplyScaled.rayMul(_pool.getReserveNormalizedIncome(_project));
+    return currentSupplyScaled;
   }
 
   /**
@@ -344,6 +355,7 @@ contract AToken is
     bytes32 r,
     bytes32 s
   ) external {
+    require(owner != spender, 'OWNER_EQUAL_TO_SPENDER');
     require(owner != address(0), 'INVALID_OWNER');
     //solium-disable-next-line
     require(block.timestamp <= deadline, 'INVALID_EXPIRATION');
@@ -381,8 +393,10 @@ contract AToken is
 
     uint256 index = pool.getReserveNormalizedIncome(project);
 
-    uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
-    uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);
+    // uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
+    uint256 fromBalanceBefore = super.balanceOf(from);
+    // uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);
+    uint256 toBalanceBefore = super.balanceOf(to);
 
     super._transfer(from, to, amount.rayDiv(index));
 

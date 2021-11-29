@@ -16,6 +16,7 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     RC_INVALID_LIQ_BONUS,
     RC_INVALID_DECIMALS,
     RC_INVALID_RESERVE_FACTOR,
+    LPC_CALLER_NOT_EMERGENCY_ADMIN,
   } = ProtocolErrors;
 
   it('Reverts trying to set an invalid reserve factor', async () => {
@@ -34,7 +35,7 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     const { isActive } = await helpersContract.getReserveConfigurationData(allReserves[1]);
     expect(isActive).to.be.equal(false);
   });
-  
+
   it('Rectivates the DAI reserve', async () => {
     const { configurator, weth, helpersContract, allReserves } = testEnv;
     await configurator.activateReserve(allReserves[1]);
@@ -42,7 +43,7 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     const { isActive } = await helpersContract.getReserveConfigurationData(allReserves[1]);
     expect(isActive).to.be.equal(true);
   });
-  
+
   it('Check the onlyAaveAdmin on deactivateReserve ', async () => {
     const { configurator, users, weth, allReserves } = testEnv;
     await expect(
@@ -50,27 +51,25 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
       CALLER_NOT_POOL_ADMIN
     ).to.be.revertedWith(CALLER_NOT_POOL_ADMIN);
   });
-  
+
   it('Check the onlyAaveAdmin on activateReserve ', async () => {
     const { configurator, users, weth, allReserves } = testEnv;
     await expect(
       configurator.connect(users[2].signer).activateReserve(allReserves[1]),
       CALLER_NOT_POOL_ADMIN
     ).to.be.revertedWith(CALLER_NOT_POOL_ADMIN);
-  });  
-  
+  });
+
   it('Freezes the DAI reserve', async () => {
     const { configurator, weth, helpersContract, allReserves } = testEnv;
 
     await configurator.freezeReserve(allReserves[1]);
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -79,10 +78,8 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(true);
     expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
-    expect(ltv).to.be.equal(strategyDAI.baseLTVAsCollateral);
-    expect(liquidationThreshold).to.be.equal(strategyDAI.liquidationThreshold);
-    expect(liquidationBonus).to.be.equal(strategyDAI.liquidationBonus);
-    expect(stableBorrowRateEnabled).to.be.equal(strategyDAI.stableBorrowRateEnabled);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(strategyDAI.reserveFactor);
   });
 
@@ -92,12 +89,10 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
 
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -106,10 +101,8 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(false);
     expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
-    expect(ltv).to.be.equal(strategyDAI.baseLTVAsCollateral);
-    expect(liquidationThreshold).to.be.equal(strategyDAI.liquidationThreshold);
-    expect(liquidationBonus).to.be.equal(strategyDAI.liquidationBonus);
-    expect(stableBorrowRateEnabled).to.be.equal(strategyDAI.stableBorrowRateEnabled);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(strategyDAI.reserveFactor);
   });
 
@@ -134,12 +127,10 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     await configurator.disableBorrowingOnReserve(allReserves[1]);
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -148,26 +139,22 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(false);
     expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
-    expect(ltv).to.be.equal(strategyDAI.baseLTVAsCollateral);
-    expect(liquidationThreshold).to.be.equal(strategyDAI.liquidationThreshold);
-    expect(liquidationBonus).to.be.equal(strategyDAI.liquidationBonus);
-    expect(stableBorrowRateEnabled).to.be.equal(strategyDAI.stableBorrowRateEnabled);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(strategyDAI.reserveFactor);
   });
-  
+
   it('Activates the DAI reserve for borrowing', async () => {
     const { configurator, weth, helpersContract, allReserves } = testEnv;
     await configurator.enableBorrowingOnReserve(allReserves[1], true);
-    const { variableBorrowIndex } = await helpersContract.getReserveData(allReserves[1]);
+    // const { variableBorrowIndex } = await helpersContract.getReserveData(allReserves[1]);
 
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -176,13 +163,9 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(false);
     expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
-    expect(ltv).to.be.equal(strategyDAI.baseLTVAsCollateral);
-    expect(liquidationThreshold).to.be.equal(strategyDAI.liquidationThreshold);
-    expect(liquidationBonus).to.be.equal(strategyDAI.liquidationBonus);
-    expect(stableBorrowRateEnabled).to.be.equal(true);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(strategyDAI.reserveFactor);
-
-    expect(variableBorrowIndex.toString()).to.be.equal(RAY);
   });
 
   it('Check the onlyAaveAdmin on disableBorrowingOnReserve ', async () => {
@@ -207,12 +190,10 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
 
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -221,10 +202,8 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(false);
     expect(decimals).to.be.equal(18);
-    expect(ltv).to.be.equal(0);
-    expect(liquidationThreshold).to.be.equal(0);
-    expect(liquidationBonus).to.be.equal(0);
-    expect(stableBorrowRateEnabled).to.be.equal(true);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(strategyDAI.reserveFactor);
   });
 
@@ -234,12 +213,10 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
 
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -248,10 +225,8 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(false);
     expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
-    expect(ltv).to.be.equal(strategyDAI.baseLTVAsCollateral);
-    expect(liquidationThreshold).to.be.equal(strategyDAI.liquidationThreshold);
-    expect(liquidationBonus).to.be.equal(strategyDAI.liquidationBonus);
-    expect(stableBorrowRateEnabled).to.be.equal(true);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(strategyDAI.reserveFactor);
   });
 
@@ -270,12 +245,10 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     await configurator.disableReserveStableRate(allReserves[1]);
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -284,10 +257,8 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(false);
     expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
-    expect(ltv).to.be.equal(strategyDAI.baseLTVAsCollateral);
-    expect(liquidationThreshold).to.be.equal(strategyDAI.liquidationThreshold);
-    expect(liquidationBonus).to.be.equal(strategyDAI.liquidationBonus);
-    expect(stableBorrowRateEnabled).to.be.equal(false);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(strategyDAI.reserveFactor);
   });
 
@@ -296,12 +267,10 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     await configurator.enableReserveStableRate(allReserves[1]);
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -310,10 +279,8 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(false);
     expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
-    expect(ltv).to.be.equal(strategyDAI.baseLTVAsCollateral);
-    expect(liquidationThreshold).to.be.equal(strategyDAI.liquidationThreshold);
-    expect(liquidationBonus).to.be.equal(strategyDAI.liquidationBonus);
-    expect(stableBorrowRateEnabled).to.be.equal(true);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(strategyDAI.reserveFactor);
   });
 
@@ -332,18 +299,16 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
       CALLER_NOT_POOL_ADMIN
     ).to.be.revertedWith(CALLER_NOT_POOL_ADMIN);
   });
-  
+
   it('Changes the reserve factor of DAI', async () => {
     const { configurator, helpersContract, weth, allReserves } = testEnv;
     await configurator.setReserveFactor(allReserves[1], '1000');
     const {
       decimals,
-      ltv,
-      liquidationBonus,
-      liquidationThreshold,
       reserveFactor,
-      stableBorrowRateEnabled,
       borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
       isActive,
       isFrozen,
     } = await helpersContract.getReserveConfigurationData(allReserves[1]);
@@ -352,10 +317,8 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
     expect(isActive).to.be.equal(true);
     expect(isFrozen).to.be.equal(false);
     expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
-    expect(ltv).to.be.equal(strategyDAI.baseLTVAsCollateral);
-    expect(liquidationThreshold).to.be.equal(strategyDAI.liquidationThreshold);
-    expect(liquidationBonus).to.be.equal(strategyDAI.liquidationBonus);
-    expect(stableBorrowRateEnabled).to.be.equal(true);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
     expect(reserveFactor).to.be.equal(1000);
   });
 
@@ -402,18 +365,16 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
 
     await configurator.updateReserveRates(
       allReserves[1],
-      "1500000000000000000000000",
-      "1600000000000000000000000"
+      "149836137868559762747440042",
+      "63644321225180017306639757"
     );
     const {
       liquidityRate,
-      variableBorrowRate,
       stableBorrowRate
     } = await helpersContract.getReserveData(allReserves[1]);
 
-    expect(liquidityRate).to.be.equal("0x013da329b6336471800000");
-    expect(variableBorrowRate).to.be.equal("0x0152d02c7e14af68000000");
-    expect(stableBorrowRate).to.be.equal("0x0152d02c7e14af68000000");
+    expect(liquidityRate).to.be.equal("149836137868559762747440042");
+    expect(stableBorrowRate).to.be.equal("63644321225180017306639757");
   });
 
   it('Check the onlyAaveAdmin on updateProjectBorrower ', async () => {
@@ -437,4 +398,142 @@ makeSuite('LendingPoolConfigurator', (testEnv: TestEnv) => {
       CALLER_NOT_POOL_ADMIN
     ).to.be.revertedWith(CALLER_NOT_POOL_ADMIN);
   });
+
+  it('Set pool pause ', async () => {
+    const { configurator, users, pool } = testEnv;
+    await configurator.connect(users[1].signer).setPoolPause(true);
+    const poolStatus = await pool.paused();
+    await expect(poolStatus).to.be.equal(true);
+  });
+
+  it('Check the onlyAaveEmergencyAdmin on set pool pause', async () => {
+    const { configurator, users } = testEnv;
+
+    await expect(configurator.connect(users[0].signer).setPoolPause(true)).to.be.revertedWith(LPC_CALLER_NOT_EMERGENCY_ADMIN);
+  });
+
+  it('Enable deposits of DAI reserve ', async () => {
+    const { configurator, users, weth, allReserves, helpersContract } = testEnv;
+    await configurator.enableDepositsOnReserve(allReserves[1]);
+
+    const {
+      decimals,
+      reserveFactor,
+      borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
+      isActive,
+      isFrozen,
+    } = await helpersContract.getReserveConfigurationData(allReserves[1]);
+
+    expect(borrowingEnabled).to.be.equal(true);
+    expect(isActive).to.be.equal(true);
+    expect(isFrozen).to.be.equal(false);
+    expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
+    expect(depositsEnabled).to.be.equal(strategyDAI.depositsEnabled);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
+    expect(reserveFactor).to.be.equal(1000);
+  });
+
+  it('Disable deposits of DAI reserve ', async () => {
+    const { configurator, users, weth, allReserves, helpersContract } = testEnv;
+    await configurator.disableDepositsOnReserve(allReserves[1]);
+
+    const {
+      decimals,
+      reserveFactor,
+      borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
+      isActive,
+      isFrozen,
+    } = await helpersContract.getReserveConfigurationData(allReserves[1]);
+
+    expect(borrowingEnabled).to.be.equal(true);
+    expect(isActive).to.be.equal(true);
+    expect(isFrozen).to.be.equal(false);
+    expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
+    expect(depositsEnabled).to.be.equal(false);
+    expect(withdrawalsEnabled).to.be.equal(strategyDAI.withdrawalsEnabled);
+    expect(reserveFactor).to.be.equal(1000);
+  });
+
+  it('Check the onlyAaveAdmin on enableDepositsOnReserve ', async () => {
+    const { configurator, users, weth, allReserves } = testEnv;
+
+    await expect(configurator.connect(
+      users[1].signer).enableDepositsOnReserve(allReserves[1])
+    ).to.be.revertedWith(CALLER_NOT_POOL_ADMIN);
+  });
+
+  it('Check the onlyAaveAdmin on disableDepositsOnReserve ', async () => {
+    const { configurator, users, weth, allReserves } = testEnv;
+
+    await expect(configurator.connect(
+      users[1].signer).disableDepositsOnReserve(allReserves[1])
+    ).to.be.revertedWith(CALLER_NOT_POOL_ADMIN);
+  });
+
+  it('Enable withdrawls of DAI reserve ', async () => {
+    const { configurator, users, weth, allReserves, helpersContract } = testEnv;
+    await configurator.enableWithdrawalsOnReserve(allReserves[1]);
+
+    const {
+      decimals,
+      reserveFactor,
+      borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
+      isActive,
+      isFrozen,
+    } = await helpersContract.getReserveConfigurationData(allReserves[1]);
+
+    expect(borrowingEnabled).to.be.equal(true);
+    expect(isActive).to.be.equal(true);
+    expect(isFrozen).to.be.equal(false);
+    expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
+    expect(depositsEnabled).to.be.equal(false);
+    expect(withdrawalsEnabled).to.be.equal(true);
+    expect(reserveFactor).to.be.equal(1000);
+  });
+
+  it('Disable withdrawls of DAI reserve ', async () => {
+    const { configurator, users, weth, allReserves, helpersContract } = testEnv;
+    await configurator.disableWithdrawalsOnReserve(allReserves[1]);
+
+    const {
+      decimals,
+      reserveFactor,
+      borrowingEnabled,
+      depositsEnabled,
+      withdrawalsEnabled,
+      isActive,
+      isFrozen,
+    } = await helpersContract.getReserveConfigurationData(allReserves[1]);
+
+    expect(borrowingEnabled).to.be.equal(true);
+    expect(isActive).to.be.equal(true);
+    expect(isFrozen).to.be.equal(false);
+    expect(decimals).to.be.equal(strategyDAI.reserveDecimals);
+    expect(depositsEnabled).to.be.equal(false);
+    expect(withdrawalsEnabled).to.be.equal(false);
+    expect(reserveFactor).to.be.equal(1000);
+  });
+
+  it('Check the onlyAaveAdmin on enableWithdrawalsOnReserve ', async () => {
+    const { configurator, users, weth, allReserves } = testEnv;
+
+    await expect(configurator.connect(
+      users[1].signer).enableWithdrawalsOnReserve(allReserves[1])
+    ).to.be.revertedWith(CALLER_NOT_POOL_ADMIN);
+  });
+
+  it('Check the onlyAaveAdmin on disableWithdrawalsOnReserve ', async () => {
+    const { configurator, users, weth, allReserves } = testEnv;
+
+    await expect(configurator.connect(
+      users[1].signer).disableWithdrawalsOnReserve(allReserves[1])
+    ).to.be.revertedWith(CALLER_NOT_POOL_ADMIN);
+  });
+
 });

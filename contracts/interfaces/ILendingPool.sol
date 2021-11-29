@@ -348,6 +348,8 @@ interface ILendingPool {
 
   function getATokenAddress(address project) external view returns (address atoken);
 
+  function getPTokenAddress(address project) external view returns (address ptoken);
+
   function updateProjectBorrower (address project, address projectBorrower) external;
 
   function updateInterestRates (

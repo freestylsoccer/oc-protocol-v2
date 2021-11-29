@@ -106,7 +106,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address onBehalfOf
   ) external override whenNotPaused {
     DataTypes.ReserveData storage reserve = _reserves[project];
-    
+
     require(reserve.underlyingAsset == asset, Errors.LP_INVALID_ASSET);
 
     ValidationLogic.validateDeposit(reserve, amount);
@@ -329,7 +329,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     emit Repay(project, asset, onBehalfOf, msg.sender, paybackAmount);
 
     return paybackAmount;
-  }  
+  }
 
   /**
    * @dev Returns the state and configuration of the reserve
@@ -436,7 +436,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   }
 
   /**
-   * @dev Returns the fee on flash loans 
+   * @dev Returns the fee on flash loans
    */
   function FLASHLOAN_PREMIUM_TOTAL() public view returns (uint256) {
     return _flashLoanPremiumTotal;
@@ -575,8 +575,8 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
   function _executeBorrow(ExecuteBorrowParams memory vars) internal {
     DataTypes.ReserveData storage reserve = _reserves[vars.project];
-    DataTypes.UserConfigurationMap storage userConfig = _usersConfig[vars.onBehalfOf];    
-    
+    DataTypes.UserConfigurationMap storage userConfig = _usersConfig[vars.onBehalfOf];
+
     ValidationLogic.validateBorrow(
       vars.asset,
       reserve,
@@ -590,8 +590,8 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     uint256 currentStableRate = reserve.currentStableBorrowRate;
 
-    bool isFirstBorrowing = false;    
-    
+    bool isFirstBorrowing = false;
+
     isFirstBorrowing = IStableDebtToken(reserve.stableDebtTokenAddress).mint(
       vars.user,
       vars.onBehalfOf,
@@ -601,7 +601,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     if (isFirstBorrowing) {
       userConfig.setBorrowing(reserve.id, true);
-    }    
+    }
 
     if (vars.releaseUnderlying) {
       IAToken(vars.aTokenAddress).transferUnderlyingTo(vars.asset, vars.user, vars.amount);
@@ -638,6 +638,10 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
   function getATokenAddress(address project) external view override returns (address atoken) {
     return _reserves[project].aTokenAddress;
+  }
+
+  function getPTokenAddress(address project) external view override returns (address ptoken) {
+    return _reserves[project].pTokenAddress;
   }
 
   function updateProjectBorrower(
