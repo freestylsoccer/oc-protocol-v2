@@ -128,9 +128,10 @@ contract AToken is
     uint256 amount,
     uint256 index
   ) external override onlyLendingPool {
-    // uint256 amountScaled = amount.rayDiv(index);
-    require(amount != 0, Errors.CT_INVALID_BURN_AMOUNT);
-    _burn(user, amount);
+    uint256 amountScaled = amount.rayDiv(index);
+    require(amountScaled != 0, Errors.CT_INVALID_BURN_AMOUNT);
+    _burn(user, amountScaled);
+
     _underlyingAsset = _pool.getUnderlyingAsset(_project);
     IERC20(_underlyingAsset).safeTransfer(receiverOfUnderlying, amount);
 
@@ -222,8 +223,14 @@ contract AToken is
     override(IncentivizedERC20, IERC20)
     returns (uint256)
   {
-    // return super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_project));
-    return super.balanceOf(user);
+    return super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_project));
+  }
+
+  function interestBalanceOf(address user) external view override returns (uint256) {
+    uint256 scaledBalance = super.balanceOf(user);
+    uint256 interest = super.balanceOf(user).rayMul(_pool.getReserveNormalizedIncome(_project));
+
+    return interest.sub(scaledBalance);
   }
 
   /**
@@ -264,8 +271,8 @@ contract AToken is
       return 0;
     }
 
-    // return currentSupplyScaled.rayMul(_pool.getReserveNormalizedIncome(_project));
-    return currentSupplyScaled;
+    return currentSupplyScaled.rayMul(_pool.getReserveNormalizedIncome(_project));
+    // return currentSupplyScaled;
   }
 
   /**
@@ -393,10 +400,10 @@ contract AToken is
 
     uint256 index = pool.getReserveNormalizedIncome(project);
 
-    // uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
-    uint256 fromBalanceBefore = super.balanceOf(from);
-    // uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);
-    uint256 toBalanceBefore = super.balanceOf(to);
+    uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
+    // uint256 fromBalanceBefore = super.balanceOf(from);
+    uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);
+    // uint256 toBalanceBefore = super.balanceOf(to);
 
     super._transfer(from, to, amount.rayDiv(index));
 

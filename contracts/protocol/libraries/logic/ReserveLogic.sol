@@ -166,7 +166,7 @@ library ReserveLogic {
     DataTypes.ReserveData storage reserve,
     address asset,
     address aTokenAddress,
-    address pTokenAddress,
+    // address pTokenAddress,
     address stableDebtTokenAddress,
     address variableDebtTokenAddress,
     address interestRateStrategyAddress,
@@ -177,7 +177,7 @@ library ReserveLogic {
     reserve.liquidityIndex = uint128(WadRayMath.ray());
     reserve.variableBorrowIndex = uint128(WadRayMath.ray());
     reserve.aTokenAddress = aTokenAddress;
-    reserve.pTokenAddress = pTokenAddress;
+    // reserve.pTokenAddress = pTokenAddress;
     reserve.stableDebtTokenAddress = stableDebtTokenAddress;
     reserve.variableDebtTokenAddress = variableDebtTokenAddress;
     reserve.interestRateStrategyAddress = interestRateStrategyAddress;
@@ -359,7 +359,8 @@ library ReserveLogic {
     vars.amountToMint = vars.totalDebtAccrued.percentMul(vars.reserveFactor);
 
     if (vars.amountToMint != 0) {
-      IPToken(reserve.pTokenAddress).mintToTreasury(vars.amountToMint, newLiquidityIndex);
+      IAToken(reserve.aTokenAddress).mintToTreasury(vars.amountToMint, newLiquidityIndex);
+      // IPToken(reserve.pTokenAddress).mintToTreasury(vars.amountToMint, newLiquidityIndex);
     }
   }
 

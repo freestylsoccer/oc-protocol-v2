@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 interface ILendingPoolConfigurator {
   struct InitReserveInput {
     address aTokenImpl;
-    address pTokenImpl;
+    // address pTokenImpl;
     address stableDebtTokenImpl;
     address variableDebtTokenImpl;
     uint8 underlyingAssetDecimals;
@@ -18,8 +18,8 @@ interface ILendingPoolConfigurator {
     string underlyingAssetName;
     string aTokenName;
     string aTokenSymbol;
-    string pTokenName;
-    string pTokenSymbol;
+    // string pTokenName;
+    // string pTokenSymbol;
     string variableDebtTokenName;
     string variableDebtTokenSymbol;
     string stableDebtTokenName;
@@ -57,7 +57,6 @@ interface ILendingPoolConfigurator {
   event ReserveInitialized(
     address indexed asset,
     address indexed aToken,
-    address indexed pToken,
     address stableDebtToken,
     address variableDebtToken,
     address interestRateStrategyAddress

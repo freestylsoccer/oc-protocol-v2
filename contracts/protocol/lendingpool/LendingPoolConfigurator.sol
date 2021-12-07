@@ -84,6 +84,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
           input.params
         )
       );
+    /*
     address pTokenProxyAddress =
       _initTokenWithProxy(
         input.pTokenImpl,
@@ -99,6 +100,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
           input.params
         )
       );
+    */
     address stableDebtTokenProxyAddress =
       _initTokenWithProxy(
         input.stableDebtTokenImpl,
@@ -133,7 +135,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
       input.project,
       input.underlyingAsset,
       aTokenProxyAddress,
-      pTokenProxyAddress,
+      // pTokenProxyAddress,
       stableDebtTokenProxyAddress,
       variableDebtTokenProxyAddress,
       input.interestRateStrategyAddress,
@@ -153,7 +155,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
     emit ReserveInitialized(
       input.project,
       aTokenProxyAddress,
-      pTokenProxyAddress,
+      // pTokenProxyAddress,
       stableDebtTokenProxyAddress,
       variableDebtTokenProxyAddress,
       input.interestRateStrategyAddress
@@ -572,6 +574,37 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
     DataTypes.ReserveConfigurationMap memory currentConfig = pool.getConfiguration(project);
 
     currentConfig.setWithdrawalsEnabled(false);
+
+    pool.setConfiguration(project, currentConfig.data);
+
+    emit WithdrawalsDisabledOnReserve(project);
+  }
+
+  /**
+   * @dev Enables interest Withdrawals on a reserve
+   * @param project The address of the project contrat associated to the reserve
+   **/
+  function enableInterestWithdrawalsOnReserve(address project)
+    external
+    onlyPoolAdmin
+  {
+    DataTypes.ReserveConfigurationMap memory currentConfig = pool.getConfiguration(project);
+
+    currentConfig.setInterestWithdrawalsEnabled(true);
+
+    pool.setConfiguration(project, currentConfig.data);
+
+    emit WithdrawalsEnabledOnReserve(project, true);
+  }
+
+  /**
+   * @dev Disables interest Withdrawals on a reserve
+   * @param project The address of the project contrat associated to the reserve
+   **/
+  function disableInterestWithdrawalsOnReserve(address project) external onlyPoolAdmin {
+    DataTypes.ReserveConfigurationMap memory currentConfig = pool.getConfiguration(project);
+
+    currentConfig.setInterestWithdrawalsEnabled(false);
 
     pool.setConfiguration(project, currentConfig.data);
 

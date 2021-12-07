@@ -8,7 +8,7 @@ import {SafeERC20} from '../../dependencies/openzeppelin/contracts/SafeERC20.sol
 import {Address} from '../../dependencies/openzeppelin/contracts/Address.sol';
 import {ILendingPoolAddressesProvider} from '../../interfaces/ILendingPoolAddressesProvider.sol';
 import {IAToken} from '../../interfaces/IAToken.sol';
-import {IPToken} from '../../interfaces/IPToken.sol';
+// import {IPToken} from '../../interfaces/IPToken.sol';
 import {IVariableDebtToken} from '../../interfaces/IVariableDebtToken.sol';
 import {IStableDebtToken} from '../../interfaces/IStableDebtToken.sol';
 import {ILendingPool} from '../../interfaces/ILendingPool.sol';
@@ -120,7 +120,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     IAToken(aToken).mint(onBehalfOf, amount, reserve.liquidityIndex);
 
-    IPToken(pToken).mint(onBehalfOf, amount, reserve.liquidityIndex);
+    // IPToken(pToken).mint(onBehalfOf, amount, reserve.liquidityIndex);
 
     emit Deposit(project, asset, msg.sender, onBehalfOf, amount);
   }
@@ -200,9 +200,13 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     require(reserve.underlyingAsset == asset, Errors.LP_INVALID_ASSET);
 
-    address pToken = reserve.pTokenAddress;
+    // address pToken = reserve.pTokenAddress;
 
-    uint256 userBalance = IPToken(pToken).balanceOf(msg.sender);
+    // uint256 userBalance = IPToken(pToken).balanceOf(msg.sender);
+
+    address aToken = reserve.aTokenAddress;
+
+    uint256 userBalance = IAToken(aToken).interestBalanceOf(msg.sender);
 
     uint256 amountToWithdraw = amount;
 
@@ -210,7 +214,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
       amountToWithdraw = userBalance;
     }
 
-    ValidationLogic.validateWithdraw(
+    ValidationLogic.validateInterestWithdraw(
       project,
       amountToWithdraw,
       userBalance,
@@ -219,7 +223,8 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
 
     reserve.updateState();
 
-    IPToken(pToken).burn(msg.sender, to, amountToWithdraw, reserve.liquidityIndex);
+    IAToken(aToken).burn(msg.sender, to, amountToWithdraw, reserve.liquidityIndex);
+    // IPToken(pToken).burn(msg.sender, to, amountToWithdraw, reserve.liquidityIndex);
 
     emit WithdrawInterest(project, msg.sender, to, amountToWithdraw);
 
@@ -501,7 +506,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address project,
     address asset,
     address aTokenAddress,
-    address pTokenAddress,
+    // address pTokenAddress,
     address stableDebtAddress,
     address variableDebtAddress,
     address interestRateStrategyAddress,
@@ -512,7 +517,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     _reserves[project].init(
       asset,
       aTokenAddress,
-      pTokenAddress,
+      // pTokenAddress,
       stableDebtAddress,
       variableDebtAddress,
       interestRateStrategyAddress,

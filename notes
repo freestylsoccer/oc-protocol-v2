@@ -15,3 +15,20 @@ Requerimientos
   -> done
 8. eliminar los oracles
   -> done
+
+# Mnemonic, only first address will be used
+MNEMONIC=""
+
+# Add Alchemy or Infura provider keys, alchemy takes preference at the config level
+ALCHEMY_KEY=""
+INFURA_KEY="e4edbc0e91034464b8de85a06c69192d"
+
+
+# Optional Etherscan key, for automatize the verification of the contracts at Etherscan
+# ETHERSCAN_KEY="FYC454DCIB8RJNAXGJYQTVMPBQ6PVRMYQM"
+# ETHERSCAN_KEY="KY596K6PY4GQ28BYVRTWJZIB9Y54TKC4EH"
+ETHERSCAN_KEY="QSDJ2HH6U8U4JZ8S5JYP8FE2BV47K3I966"
+
+# Optional, if you plan to use Tenderly scripts
+TENDERLY_PROJECT="https://dashboard.tenderly.co/pofielperro/project"
+TENDERLY_USERNAME="pofielperro"

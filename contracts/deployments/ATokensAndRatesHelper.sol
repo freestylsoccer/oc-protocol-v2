@@ -35,6 +35,7 @@ contract ATokensAndRatesHelper is Ownable {
     bool borrowingEnabled;
     bool depositsEnabled;
     bool withdrawalsEnabled;
+    bool interestWithdrawalsEnabled;
   }
 
   constructor(
@@ -94,6 +95,12 @@ contract ATokensAndRatesHelper is Ownable {
           inputParams[i].asset
         );
       }
+      if (inputParams[i].interestWithdrawalsEnabled) {
+        configurator.enableInterestWithdrawalsOnReserve(
+          inputParams[i].asset
+        );
+      }
+
       configurator.setReserveFactor(inputParams[i].asset, inputParams[i].reserveFactor);
     }
   }

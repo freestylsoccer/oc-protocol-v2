@@ -268,7 +268,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   const testHelpers = await deployAaveProtocolDataProvider(addressesProvider.address);
 
   await deployATokenImplementations(ConfigNames.Pofi, reservesParams, false);
-  await deployPTokenImplementations(ConfigNames.Pofi, reservesParams, false);
+  // await deployPTokenImplementations(ConfigNames.Pofi, reservesParams, false);
 
   const admin = await deployer.getAddress();
 
@@ -281,7 +281,7 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
     allReservesAddresses,
     allProjectAddresses,
     ATokenNamePrefix,
-    PTokenNamePrefix,
+    // PTokenNamePrefix,
     StableDebtTokenNamePrefix,
     VariableDebtTokenNamePrefix,
     SymbolPrefix,

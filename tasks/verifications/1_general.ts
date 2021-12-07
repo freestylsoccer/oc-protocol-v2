@@ -49,7 +49,7 @@ task('verify:general', 'Verify contracts at Etherscan')
       : await getLendingPoolAddressesProviderRegistry();
     const lendingPoolAddress = await addressesProvider.getLendingPool();
     const lendingPoolConfiguratorAddress = await addressesProvider.getLendingPoolConfigurator(); //getLendingPoolConfiguratorProxy();
-    
+
     const lendingPoolProxy = await getProxy(lendingPoolAddress);
     const lendingPoolConfiguratorProxy = await getProxy(lendingPoolConfiguratorAddress);
 
@@ -66,11 +66,11 @@ task('verify:general', 'Verify contracts at Etherscan')
       const lendingPoolConfiguratorImpl = notFalsyOrZeroAddress(lendingPoolConfiguratorImplAddress)
         ? await getLendingPoolConfiguratorImpl(lendingPoolConfiguratorImplAddress)
         : await getLendingPoolConfiguratorImpl();
-      /*
+
 
       const dataProvider = await getAaveProtocolDataProvider();
       const walletProvider = await getWalletProvider();
-
+      /*
       // Address Provider
       console.log('\n- Verifying address provider...\n');
       await verifyContract(eContractid.LendingPoolAddressesProvider, addressesProvider, [MarketId]);
@@ -82,14 +82,15 @@ task('verify:general', 'Verify contracts at Etherscan')
         addressesProviderRegistry,
         []
       );
+      */
 
       // Lending Pool implementation
       console.log('\n- Verifying LendingPool Implementation...\n');
       await verifyContract(eContractid.LendingPool, lendingPoolImpl, []);
-      */
+
       // Lending Pool Configurator implementation
       console.log('\n- Verifying LendingPool Configurator Implementation...\n');
-      await verifyContract(eContractid.LendingPoolConfigurator, lendingPoolConfiguratorImpl, []);      
+      await verifyContract(eContractid.LendingPoolConfigurator, lendingPoolConfiguratorImpl, []);
       /*
       // Test helpers
       console.log('\n- Verifying  Aave  Provider Helpers...\n');
@@ -100,9 +101,9 @@ task('verify:general', 'Verify contracts at Etherscan')
       // Wallet balance provider
       console.log('\n- Verifying  Wallet Balance Provider...\n');
       await verifyContract(eContractid.WalletBalanceProvider, walletProvider, []);
-    */
+      */
     }
-    /*
+
     // Lending Pool proxy
     console.log('\n- Verifying  Lending Pool Proxy...\n');
     await verifyContract(eContractid.InitializableAdminUpgradeabilityProxy, lendingPoolProxy, [
@@ -116,7 +117,6 @@ task('verify:general', 'Verify contracts at Etherscan')
       lendingPoolConfiguratorProxy,
       [addressesProvider.address]
     );
-    */
 
     console.log('Finished verifications.');
   });

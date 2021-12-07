@@ -15,6 +15,7 @@ export const strategyWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -29,6 +30,7 @@ export const strategyWBTC: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '8',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '2000'
@@ -43,6 +45,7 @@ export const strategyDAI: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -57,6 +60,7 @@ export const strategyUSDC: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '6',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -71,6 +75,7 @@ export const strategyUSDT: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '6',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -85,6 +90,7 @@ export const strategyDAIWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -99,6 +105,7 @@ export const strategyWBTCWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -113,6 +120,7 @@ export const strategyAAVEWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '500'
@@ -127,6 +135,7 @@ export const strategyBATWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -141,6 +150,7 @@ export const strategyDAIUSDC: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -155,6 +165,7 @@ export const strategyCRVWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -169,6 +180,7 @@ export const strategyLINKWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -183,6 +195,7 @@ export const strategyMKRWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -197,6 +210,7 @@ export const strategyRENWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -211,6 +225,7 @@ export const strategySNXWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '2000'
@@ -225,6 +240,7 @@ export const strategyUNIWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -239,6 +255,7 @@ export const strategyUSDCWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -253,6 +270,7 @@ export const strategyWBTCUSDC: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -267,6 +285,7 @@ export const strategyYFIWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'
@@ -281,6 +300,7 @@ export const strategyBALWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1500'

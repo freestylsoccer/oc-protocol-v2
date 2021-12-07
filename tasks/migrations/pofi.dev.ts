@@ -37,10 +37,11 @@ task('pofi:dev', 'Deploy development enviroment')
 
     // console.log('5. Initialize lending pool');
     // await localBRE.run('dev:initialize-lending-pool', { verify, pool: POOL_NAME });
+
     if (true) {
       printContracts();
-      console.log('7. Veryfing contracts');
-      await localBRE.run('verify:general', { all: true, pool: POOL_NAME });
+      // console.log('7. Veryfing contracts');
+      // await localBRE.run('verify:general', { all: true, pool: POOL_NAME });
 
       console.log('8. Veryfing aTokens and debtTokens');
       await localBRE.run('verify:tokens', { pool: POOL_NAME });

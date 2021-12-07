@@ -44,7 +44,14 @@ export const PofiConfig: IPofiConfiguration = {
   },
   ReserveAssets: {
     [eEthereumNetwork.buidlerevm]: {},
-    [eEthereumNetwork.hardhat]: {},
+    [eEthereumNetwork.hardhat]: {
+      BUSD: '0xb85E76C7477Bd9e4cDCFEE11cbd477D10a375634',
+      DAI: '0x55703f991206F97B7aB4f5b81A89FA8857f2f69A',
+      SUSD: '0x44352E3FC21659010fd584fF7A6d7Af52C9c6B35',
+      TUSD: '0x38267B4B0709aB1110af87fC964e276D39f4d626',
+      USDT: '0xa2C103d6733799DfB169E150A2FC4307CB61848A',
+      USDC: '0x4a97f1e5cC2752E521C15CDEAf3e59045f50cD69',
+    },
     [eEthereumNetwork.coverage]: {},
     [eEthereumNetwork.kovan]: {
       AAVE: '0xB597cd8D3217ea6477232F9217fa70837ff667Af',

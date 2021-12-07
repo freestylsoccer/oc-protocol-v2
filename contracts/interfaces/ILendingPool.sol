@@ -274,7 +274,7 @@ interface ILendingPool {
     address project,
     address reserve,
     address aTokenAddress,
-    address pTokenAddress,
+    // address pTokenAddress,
     address stableDebtAddress,
     address variableDebtAddress,
     address interestRateStrategyAddress,

@@ -21,9 +21,10 @@ export const strategyBUSD: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -36,9 +37,10 @@ export const strategyDAI: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -51,9 +53,10 @@ export const strategySUSD: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -66,9 +69,10 @@ export const strategyTUSD: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -81,9 +85,10 @@ export const strategyUSDC: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '6',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -96,9 +101,10 @@ export const strategyUSDT: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '6',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -111,9 +117,10 @@ export const strategyAAVE: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '0',
 };
 
@@ -126,9 +133,10 @@ export const strategyBAT: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -141,9 +149,10 @@ export const strategyENJ: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -156,9 +165,10 @@ export const strategyWETH: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -171,9 +181,10 @@ export const strategyKNC: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -186,9 +197,10 @@ export const strategyLINK: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -201,9 +213,10 @@ export const strategyMANA: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '3500',
 };
 
@@ -216,9 +229,10 @@ export const strategyMKR: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -231,9 +245,10 @@ export const strategyREN: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -246,9 +261,10 @@ export const strategySNX: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '3500',
 };
 
@@ -262,6 +278,7 @@ export const strategyUNI: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.DelegationAwareAToken,
   reserveFactor: '2000',
@@ -276,9 +293,10 @@ export const strategyWBTC: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '8',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -291,9 +309,10 @@ export const strategyYFI: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -306,9 +325,10 @@ export const strategyZRX: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -321,8 +341,9 @@ export const strategyXSUSHI: IReserveParams = {
   depositsEnabled: true,
   withdrawalsEnabled: true,
   stableBorrowRateEnabled: false,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
-  pTokenImpl: eContractid.PToken,
+  // pTokenImpl: eContractid.PToken,
   reserveFactor: '3500',
 };

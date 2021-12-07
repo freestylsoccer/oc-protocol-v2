@@ -1,7 +1,7 @@
 // import BigNumber from 'bignumber.js';
 // import { oneRay } from '../../helpers/constants';
 import { eContractid, IReserveParams } from '../../helpers/types';
-import { 
+import {
   rateStrategyStableOne,
   rateStrategyStableTwo,
   rateStrategyStableThree,
@@ -19,6 +19,7 @@ export const strategyDAI: IReserveParams = {
   liquidationBonus: '10500',
   borrowingEnabled: true,
   stableBorrowRateEnabled: true,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -31,6 +32,7 @@ export const strategyUSDC: IReserveParams = {
   liquidationBonus: '10500',
   borrowingEnabled: true,
   stableBorrowRateEnabled: true,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '6',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -43,6 +45,7 @@ export const strategyUSDT: IReserveParams = {
     liquidationBonus: '10500',
     borrowingEnabled: true,
     stableBorrowRateEnabled: true,
+    interestWithdrawalsEnabled: true,
     reserveDecimals: '6',
     aTokenImpl: eContractid.AToken,
     reserveFactor: '1000'
@@ -55,6 +58,7 @@ export const strategyWETH: IReserveParams = {
   liquidationBonus: '10500',
   borrowingEnabled: true,
   stableBorrowRateEnabled: true,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '1000'
@@ -67,6 +71,7 @@ export const strategyWBTC: IReserveParams = {
   liquidationBonus: '11000',
   borrowingEnabled: true,
   stableBorrowRateEnabled: true,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '8',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '2000'
@@ -79,6 +84,7 @@ export const strategySTAKE: IReserveParams = {
   liquidationBonus: '11000',
   borrowingEnabled: true,
   stableBorrowRateEnabled: true,
+  interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
   reserveFactor: '2000'

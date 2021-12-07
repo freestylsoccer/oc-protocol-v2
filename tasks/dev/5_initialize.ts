@@ -53,7 +53,7 @@ task('dev:initialize-lending-pool', 'Initialize lending pool configuration.')
     const protoPoolReservesAddresses = <{ [symbol: string]: tEthereumAddress }>(
       filterMapBy(allTokenAddresses, (key: string) => !key.includes('UNI_'))
     );
-    
+
     const testHelpers = await deployAaveProtocolDataProvider(addressesProvider.address, true);
 
     const admin = await addressesProvider.getPoolAdmin();
@@ -65,7 +65,7 @@ task('dev:initialize-lending-pool', 'Initialize lending pool configuration.')
       protoPoolReservesAddresses,
       allProjectAddresses,
       ATokenNamePrefix,
-      PTokenNamePrefix,
+      // PTokenNamePrefix,
       StableDebtTokenNamePrefix,
       VariableDebtTokenNamePrefix,
       SymbolPrefix,
@@ -77,7 +77,7 @@ task('dev:initialize-lending-pool', 'Initialize lending pool configuration.')
       "0xcc1f73107f2C0C96a4525ef692fa375E9fF48642",
     );
     await configureReservesByHelper2(ReservesConfig, protoPoolReservesAddresses, allProjectAddresses, testHelpers, admin);
-    
+
     /*
     const collateralManager = await deployLendingPoolCollateralManager(verify);
     await waitForTx(
@@ -97,10 +97,10 @@ task('dev:initialize-lending-pool', 'Initialize lending pool configuration.')
     await deployWalletBalancerProvider(verify);
 
     await insertContractAddressInDb(eContractid.AaveProtocolDataProvider, testHelpers.address);
-    
+
     /*
     const lendingPoolAddress = await addressesProvider.getLendingPool();
-    
+
     let gateway = getParamPerNetwork(WethGateway, network);
     if (!notFalsyOrZeroAddress(gateway)) {
       gateway = (await getWETHGateway()).address;

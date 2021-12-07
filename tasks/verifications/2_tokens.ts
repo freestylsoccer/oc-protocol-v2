@@ -36,7 +36,24 @@ task('verify:tokens', 'Deploy oracles for dev enviroment')
     );
 
     const configs = Object.entries(ReservesConfig) as [string, IReserveParams][];
-    for (const entry of Object.entries(getParamPerNetwork(ReserveAssets, network))) {
+    // console.log(ReserveAssets);
+    // console.log(configs);
+    const otherReserveAssets =
+    {
+      DAI: "0x0e48B61B4517cC38b5fa05aBd9eD281A4bC2321F",
+      TUSD: "0x5f18e1c347890B8F145f616BCCa111056B19CF1d",
+      USDC: "0x0967D766AE11cFF946eC87567269374Ecd1541b7",
+      USDT: "0x93a5E88d04aa5907e41b355341D929136A4344C3",
+      SUSD: "0x21576343173a013acA62A86C95BA65D3dFe7C7A8",
+      BUSD: "0xFe849353932cF14c68A3485a69854da8bb8c7b01",
+    }
+    await verifyContract(
+      eContractid.InitializableAdminUpgradeabilityProxy,
+      await getAToken("0xFE22e9257596b781DDC1B0b9b211FA53Cc071caa"),
+      []
+    );
+    
+    for (const entry of Object.entries(otherReserveAssets)) {
       const [token, tokenAddress] = entry;
       console.log(`- Verifying ${token} token related contracts`);
       const {
@@ -50,7 +67,7 @@ task('verify:tokens', 'Deploy oracles for dev enviroment')
       if (!tokenConfig) {
         throw `ReservesConfig not found for ${token} token`;
       }
-
+/*
       const {
         optimalUtilizationRate,
         baseVariableBorrowRate,
@@ -100,11 +117,11 @@ task('verify:tokens', 'Deploy oracles for dev enviroment')
           stableRateSlope2,
         ]
       );
-
+      */
       const stableDebt = await getAddressById(`stableDebt${token}`);
       const variableDebt = await getAddressById(`variableDebt${token}`);
       const aToken = await getAddressById(`a${token}`);
-
+      console.log(aToken)
       if (aToken) {
         console.log('\n- Verifying aToken...\n');
         await verifyContract(eContractid.AToken, await getAToken(aToken), [
@@ -118,6 +135,7 @@ task('verify:tokens', 'Deploy oracles for dev enviroment')
       } else {
         console.error(`Skipping aToken verify for ${token}. Missing address at JSON DB.`);
       }
+      /*
       if (stableDebt) {
         console.log('\n- Verifying StableDebtToken...\n');
         await verifyContract(eContractid.StableDebtToken, await getStableDebtToken(stableDebt), [
@@ -145,6 +163,6 @@ task('verify:tokens', 'Deploy oracles for dev enviroment')
         );
       } else {
         console.error(`Skipping variable debt verify for ${token}. Missing address at JSON DB.`);
-      }
+      }*/
     }
   });

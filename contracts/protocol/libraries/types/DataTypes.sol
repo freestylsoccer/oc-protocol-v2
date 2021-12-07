@@ -45,6 +45,7 @@ library DataTypes {
     //bit 64-79: reserve factor
     //bit 80: deposits are enabled
     //bit 81: Withdrawals are enabled
+    //bit 82: Withdrawals interest are enabled
     uint256 data;
   }
 

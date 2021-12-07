@@ -70,6 +70,29 @@ library ValidationLogic {
     require(withdrawalsEnabled, Errors.VL_WITHDRAWALS_DISABLED);
   }
 
+  /**
+   * @dev Validates a withdraw action
+   * @param reserveAddress The address of the reserve
+   * @param amount The amount to be withdrawn
+   * @param userBalance The balance of the user
+   * @param reservesData The reserves state
+   */
+  function validateInterestWithdraw(
+    address reserveAddress,
+    uint256 amount,
+    uint256 userBalance,
+    mapping(address => DataTypes.ReserveData) storage reservesData
+  ) external view {
+    require(amount != 0, Errors.VL_INVALID_AMOUNT);
+    require(amount <= userBalance, Errors.VL_NOT_ENOUGH_AVAILABLE_USER_BALANCE);
+
+    (bool isActive, , , , ) = reservesData[reserveAddress].configuration.getFlags();
+    bool withdrawalsEnabled = reservesData[reserveAddress].configuration.getInterestWithdrawalsEnabled();
+
+    require(isActive, Errors.VL_NO_ACTIVE_RESERVE);
+    require(withdrawalsEnabled, Errors.VL_WITHDRAWALS_DISABLED);
+  }
+
   struct ValidateBorrowLocalVars {
     bool isActive;
     bool isFrozen;
@@ -106,7 +129,7 @@ library ValidationLogic {
 
     require(userAddress == projectBorrower || userAddress == emergencyAdmin, "Only project borrower or emergency admin");
 
-    require(vars.borrowingEnabled, Errors.VL_BORROWING_NOT_ENABLED);    
+    require(vars.borrowingEnabled, Errors.VL_BORROWING_NOT_ENABLED);
   }
 
   /**

@@ -77,16 +77,6 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     // console.log(await pool.getReserveData(allReserves[1]));
     const balance = await dai.balanceOf(users[1].address);
     expect(balance).to.be.equal("0x6c6b935b8bbd400000");
-    /*
-    console.log('user 1 dai balance:');
-    console.log(await dai.balanceOf(users[1].address));
-
-    console.log('user 1 aToken balance:');
-    console.log(await aDai.balanceOf(users[1].address));
-
-    console.log('user 1 pToken balance:');
-    console.log(await pToken.balanceOf(users[1].address));
-    */
   });
 
   it('Try to do a withdraw when withdrawls are disabled on reserve ', async () => {
@@ -130,7 +120,7 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
   });
 
   it('Try to Borrow when borrowing is disabled ', async () => {
-    const { users, pool, dai, stableDebToken, variableDebToken, configurator, allReserves } = testEnv;
+    const { users, pool, dai, aDai, stableDebToken, variableDebToken, configurator, allReserves } = testEnv;
 
     const amountDAItoBorrow = await convertToCurrencyDecimals(dai.address, '1000');
     // set ptoject borrower
@@ -149,7 +139,7 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
   });
 
   it('Try to Borrow when not project borrower ', async () => {
-    const { users, pool, dai, stableDebToken, variableDebToken, configurator, allReserves } = testEnv;
+    const { users, pool, dai, aDai, stableDebToken, variableDebToken, configurator, allReserves } = testEnv;
 
     const amountDAItoBorrow = await convertToCurrencyDecimals(dai.address, '1000');
     // set ptoject borrower
@@ -178,6 +168,7 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     await expect(variableDebtBalance).to.be.equal("0x00");
   });
 
+  /*
   it('prepare atonken for withdraw interest', async () => {
     const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
 
@@ -188,26 +179,33 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     await dai.connect(users[5].signer).approve(pool.address, APPROVAL_AMOUNT_LENDING_POOL);
     await pool.connect(users[5].signer).deposit(allReserves[1], dai.address, amountDAItoDeposit, users[5].address);
   });
+*/
 
   it('Try to Withdral interest without balance ', async () => {
     const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
     console.log('atoken dai balance:');
     console.log(await dai.balanceOf(aDai.address));
-    const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '0.0000000001');
-    await expect(pool.connect(users[5].signer).withdrawInterest(allReserves[1], dai.address, amountDAItoWithdraw, users[5].address)
-      ).to.be.revertedWith(VL_NOT_ENOUGH_AVAILABLE_USER_BALANCE);
 
+    const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '1');
+    await expect(
+      pool.connect(users[5].signer).withdrawInterest(allReserves[1], dai.address, amountDAItoWithdraw, users[5].address)
+    ).to.be.revertedWith(VL_NOT_ENOUGH_AVAILABLE_USER_BALANCE);
   });
 
   it('Set interest rates ', async () => {
     const { configurator, allReserves, helpersContract } = testEnv;
     await configurator.updateReserveRates(allReserves[1], "149836137868559762747440042", "63644321225180017306639757");
+
+    function timeout(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    await timeout(1000);
   });
 
   it('Borrow after setting interest rates ', async () => {
     const { users, pool, dai, aDai, stableDebToken, variableDebToken, configurator, allReserves } = testEnv;
 
-    const amountDAItoBorrow = await convertToCurrencyDecimals(dai.address, '2000');
+    const amountDAItoBorrow = await convertToCurrencyDecimals(dai.address, '1000');
     // set ptoject borrower
     await configurator.updateProjectBorrower(allReserves[1], users[2].address);
     // enable borrowing
@@ -218,50 +216,17 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     // console.log(await aDai.getIncentivesController());
     const balance = await dai.balanceOf(users[2].address);
 
-    await expect(balance).to.be.equal("4000000000000000000000");
-
-    function timeout(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    await timeout(1000);
+    await expect(balance).to.be.equal("3000000000000000000000");
     // await configurator.disableBorrowingOnReserve(allReserves[1]);
   });
 
   it('Withdral interest when reserve has not enough balance', async () => {
     const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
-    /*
-    console.log('user 5 aToken balance:');
-    console.log(await aDai.balanceOf(users[5].address));
-    console.log('user 1 aToken balance:');
-    console.log(await aDai.balanceOf(users[1].address));
-    console.log('aToken total supply:');
-    console.log(await aDai.totalSupply());
 
-    console.log('pToken total supply:');
-    console.log(await pToken.totalSupply());
-    console.log('user 5 pToken balance:');
-    console.log(await pToken.balanceOf(users[5].address));
-    console.log('user 1 pToken balance:');
-    console.log(await pToken.balanceOf(users[1].address));
-    */
-
-    const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '0.000000000000000001');
+    const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '0.00000475127');
     await expect(
-      pool.connect(users[5].signer).withdrawInterest(allReserves[1], dai.address, amountDAItoWithdraw, users[5].address)
+      pool.connect(users[1].signer).withdrawInterest(allReserves[1], dai.address, amountDAItoWithdraw, users[1].address)
     ).to.be.revertedWith("SafeERC20: low-level call failed");
-    /*
-    console.log('aToken balance:');
-    console.log(await aDai.balanceOf(users[5].address));
-    console.log('aToken total supply:');
-    console.log(await aDai.totalSupply());
-
-    console.log('pToken total supply:');
-    console.log(await pToken.totalSupply());
-    console.log('user 5 pToken balance:');
-    console.log(await pToken.balanceOf(users[5].address));
-    console.log('user 1 pToken balance:');
-    console.log(await pToken.balanceOf(users[1].address));
-    */
   });
 
   it('Reapay after borrow',  async () => {
@@ -270,50 +235,37 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     // user 0 deposits 1000 DAI
     await dai.connect(users[2].signer).approve(pool.address, APPROVAL_AMOUNT_LENDING_POOL);
 
-    const amountDAItoRepay = await convertToCurrencyDecimals(dai.address, '4000');
+    const amountDAItoRepay = await convertToCurrencyDecimals(dai.address, '1100');
 
     await pool.connect(users[2].signer).repay(allReserves[1], dai.address, amountDAItoRepay, users[2].address);
 
-    let stableDebtBalance = await stableDebToken.connect(users[3].signer).balanceOf(users[3].address);
-    let variableDebtBalance = await variableDebToken.connect(users[3].signer).balanceOf(users[3].address);
+    let stableDebtBalance = await stableDebToken.connect(users[2].signer).balanceOf(users[2].address);
+    let variableDebtBalance = await variableDebToken.connect(users[2].signer).balanceOf(users[2].address);
     await expect(variableDebtBalance).to.be.equal("0x00");
   });
 
   it('Withdral interest after repay', async () => {
     const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
 
-    // console.log('user 5 aToken balance:');
-    // console.log(await aDai.balanceOf(users[5].address));
-    // console.log('user 1 aToken balance:');
-    // console.log(await aDai.balanceOf(users[1].address));
-    // console.log('aToken total supply:');
-    // console.log(await aDai.totalSupply());
+    const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '1');
+    await pool.connect(users[1].signer).withdrawInterest(allReserves[1], dai.address, "28507636874246", users[1].address);
 
-    console.log('pToken total supply:');
-    console.log(await pToken.totalSupply());
-    console.log('user 5 pToken balance:');
-    console.log(await pToken.balanceOf(users[5].address));
-    console.log('user 5 pToken scaledBalanceOf:');
-    console.log(await pToken.scaledBalanceOf(users[5].address));
-    console.log('user 1 pToken balance:');
-    console.log(await pToken.balanceOf(users[1].address));
-    console.log('user 1 pToken scaledBalanceOf:');
-    console.log(await pToken.scaledBalanceOf(users[1].address));
+    function timeout(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    await timeout(3000);
+  });
 
-    const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '0.00002850763');
-    await pool.connect(users[5].signer).withdrawInterest(allReserves[1], dai.address, amountDAItoWithdraw, users[5].address);
-    await pool.connect(users[1].signer).withdrawInterest(allReserves[1], dai.address, amountDAItoWithdraw, users[1].address);
+  it('print ', async () => {
+    const { users, aDai } = testEnv;
 
-    // console.log('aToken balance:');
-    // console.log(await aDai.balanceOf(users[5].address));
-    // console.log('aToken total supply:');
-    // console.log(await aDai.totalSupply());
-
-    console.log('pToken total supply:');
-    console.log(await pToken.totalSupply());
-    console.log('user 5 pToken balance:');
-    console.log(await pToken.balanceOf(users[5].address));
-    console.log('user 1 pToken balance:');
-    console.log(await pToken.balanceOf(users[1].address));
+    console.log('aToken total supply:');
+    console.log(await aDai.totalSupply());
+    console.log('user 1 aToken scaled balance:');
+    console.log(await aDai.scaledBalanceOf(users[1].address));
+    console.log('user 1 aToken balance:');
+    console.log(await aDai.balanceOf(users[1].address));
+    console.log('user 1 aToken interest balance:');
+    console.log(await aDai.interestBalanceOf(users[1].address));
   });
 });

@@ -765,6 +765,7 @@ export const deployATokenImplementations = async (
   }
 };
 
+/*
 export const deployPTokenImplementations = async (
   pool: ConfigNames,
   reservesConfig: { [key: string]: IReserveParams },
@@ -812,6 +813,7 @@ export const deployPTokenImplementations = async (
     await deployGenericVariableDebtToken(verify);
   }
 };
+*/
 
 export const deployRateStrategy = async (
   strategyName: string,
