@@ -125,7 +125,8 @@ contract UiPoolDataProvider is IUiPoolDataProvider {
         reserveData.borrowingEnabled,
         reserveData.stableBorrowRateEnabled,
         reserveData.depositsEnabled,
-        reserveData.withdrawalsEnabled
+        reserveData.withdrawalsEnabled,
+        reserveData.interestWithdrawalsEnabled
       ) = baseData.configuration.getFlagsMemory();
       reserveData.usageAsCollateralEnabled = reserveData.baseLTVasCollateral != 0;
       (
@@ -144,13 +145,13 @@ contract UiPoolDataProvider is IUiPoolDataProvider {
           reserveData.aEmissionPerSecond,
           reserveData.aIncentivesLastUpdateTimestamp
         ) = incentivesController.getAssetData(reserveData.aTokenAddress);
-     
+
         (
           reserveData.sTokenIncentivesIndex,
           reserveData.sEmissionPerSecond,
           reserveData.sIncentivesLastUpdateTimestamp
         ) = incentivesController.getAssetData(reserveData.stableDebtTokenAddress);
-     
+
         (
           reserveData.vTokenIncentivesIndex,
           reserveData.vEmissionPerSecond,
@@ -301,7 +302,8 @@ contract UiPoolDataProvider is IUiPoolDataProvider {
         reserveData.borrowingEnabled,
         reserveData.stableBorrowRateEnabled,
         reserveData.depositsEnabled,
-        reserveData.withdrawalsEnabled
+        reserveData.withdrawalsEnabled,
+        reserveData.interestWithdrawalsEnabled
       ) = baseData.configuration.getFlagsMemory();
       reserveData.usageAsCollateralEnabled = reserveData.baseLTVasCollateral != 0;
       (
@@ -319,14 +321,14 @@ contract UiPoolDataProvider is IUiPoolDataProvider {
           reserveData.aTokenIncentivesIndex,
           reserveData.aEmissionPerSecond,
           reserveData.aIncentivesLastUpdateTimestamp
-        ) = incentivesController.getAssetData(reserveData.aTokenAddress); 
-     
+        ) = incentivesController.getAssetData(reserveData.aTokenAddress);
+
         (
           reserveData.sTokenIncentivesIndex,
           reserveData.sEmissionPerSecond,
           reserveData.sIncentivesLastUpdateTimestamp
         ) = incentivesController.getAssetData(reserveData.stableDebtTokenAddress);
-     
+
         (
           reserveData.vTokenIncentivesIndex,
           reserveData.vEmissionPerSecond,

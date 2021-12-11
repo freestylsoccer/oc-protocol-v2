@@ -170,7 +170,7 @@ export const initReservesByHelper2 = async (
   tokenAddresses: { [symbol: string]: tEthereumAddress },
   projectAddresses: { [name: string]: tEthereumAddress },
   aTokenNamePrefix: string,
-  // pTokenNamePrefix: string,
+  pTokenNamePrefix: string,
   stableDebtTokenNamePrefix: string,
   variableDebtTokenNamePrefix: string,
   symbolPrefix: string,
@@ -191,7 +191,7 @@ export const initReservesByHelper2 = async (
 
   let initInputParams: {
     aTokenImpl: string;
-    // pTokenImpl: string;
+    pTokenImpl: string;
     stableDebtTokenImpl: string;
     variableDebtTokenImpl: string;
     underlyingAssetDecimals: BigNumberish;
@@ -202,8 +202,8 @@ export const initReservesByHelper2 = async (
     underlyingAssetName: string;
     aTokenName: string;
     aTokenSymbol: string;
-    // pTokenName: string;
-    // pTokenSymbol: string;
+    pTokenName: string;
+    pTokenSymbol: string;
     variableDebtTokenName: string;
     variableDebtTokenSymbol: string;
     stableDebtTokenName: string;
@@ -232,22 +232,8 @@ export const initReservesByHelper2 = async (
       console.log(`- Skipping init of ${symbol} due token address is not set at markets config`);
       continue;
     }
-    // console.log(params);
-    /*
-    // deploy mock project
-    const tokens: { [symbol: string]: Project } = {};
-    let name = "POFIProject" + symbol;
-    let startDate = "1635704185";
-    let endDate = "1640974585";
 
-    tokens[symbol] = await deployMockProjects([
-      name,
-      startDate,
-      endDate,
-    ]);
-    await rawInsertContractAddressInDb(name.toUpperCase(), tokens[symbol].address);
-    */
-    const { strategy, aTokenImpl, reserveDecimals } = params;
+    const { strategy, aTokenImpl, pTokenImpl, reserveDecimals } = params;
     // console.log(aTokenImpl);
     const {
       optimalUtilizationRate,
@@ -284,7 +270,7 @@ export const initReservesByHelper2 = async (
     reserveSymbols.push(symbol);
     initInputParams.push({
       aTokenImpl: await getContractAddressWithJsonFallback(aTokenImpl, poolName),
-      // pTokenImpl: await getContractAddressWithJsonFallback(pTokenImpl, poolName),
+      pTokenImpl: await getContractAddressWithJsonFallback(pTokenImpl, poolName),
       stableDebtTokenImpl: await getContractAddressWithJsonFallback(
         eContractid.StableDebtToken,
         poolName
@@ -301,8 +287,8 @@ export const initReservesByHelper2 = async (
       underlyingAssetName: symbol,
       aTokenName: `${aTokenNamePrefix} ${symbol}`,
       aTokenSymbol: `a${symbolPrefix}${symbol}`,
-      // pTokenName: `${pTokenNamePrefix} ${symbol}`,
-      // pTokenSymbol: `p${symbolPrefix}${symbol}`,
+      pTokenName: `${pTokenNamePrefix} ${symbol}`,
+      pTokenSymbol: `p${symbolPrefix}${symbol}`,
       variableDebtTokenName: `${variableDebtTokenNamePrefix} ${symbolPrefix}${symbol}`,
       variableDebtTokenSymbol: `variableDebt${symbolPrefix}${symbol}`,
       stableDebtTokenName: `${stableDebtTokenNamePrefix} ${symbol}`,

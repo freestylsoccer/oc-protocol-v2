@@ -20,6 +20,7 @@ interface IUiPoolDataProvider {
     bool stableBorrowRateEnabled;
     bool depositsEnabled;
     bool withdrawalsEnabled;
+    bool interestWithdrawalsEnabled;
     bool isActive;
     bool isFrozen;
     // base data

@@ -38,9 +38,9 @@ interface ILendingPoolAddressesProvider {
 
   function setLendingPoolConfiguratorImpl(address configurator) external;
 
-  function getLendingPoolCollateralManager() external view returns (address);
+  // function getLendingPoolCollateralManager() external view returns (address);
 
-  function setLendingPoolCollateralManager(address manager) external;
+  // function setLendingPoolCollateralManager(address manager) external;
 
   function getPoolAdmin() external view returns (address);
 

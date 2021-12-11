@@ -183,8 +183,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
    * E.g. User has 100 aUSDC, calls withdraw() and receives 100 USDC, burning the 100 aUSDC
    * @param project The address of the project contrat associated to the reserve
    * @param asset The address of the underlying asset to withdraw
-   * @param amount The underlying amount to be withdrawn
-   *   - Send the value type(uint256).max in order to withdraw the whole aToken balance
    * @param to Address that will receive the underlying, same as msg.sender if the user
    *   wants to receive it on his own wallet, or a different address if the beneficiary is a
    *   different wallet
@@ -193,38 +191,25 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   function withdrawInterest(
     address project,
     address asset,
-    uint256 amount,
     address to
   ) external override whenNotPaused returns (uint256) {
     DataTypes.ReserveData storage reserve = _reserves[project];
 
     require(reserve.underlyingAsset == asset, Errors.LP_INVALID_ASSET);
 
-    // address pToken = reserve.pTokenAddress;
-
-    // uint256 userBalance = IPToken(pToken).balanceOf(msg.sender);
-
     address aToken = reserve.aTokenAddress;
 
-    uint256 userBalance = IAToken(aToken).interestBalanceOf(msg.sender);
-
-    uint256 amountToWithdraw = amount;
-
-    if (amount == type(uint256).max) {
-      amountToWithdraw = userBalance;
-    }
+    uint256 userBalance = IAToken(aToken).balanceOf(msg.sender);
 
     ValidationLogic.validateInterestWithdraw(
       project,
-      amountToWithdraw,
       userBalance,
       _reserves
     );
 
     reserve.updateState();
 
-    IAToken(aToken).burn(msg.sender, to, amountToWithdraw, reserve.liquidityIndex);
-    // IPToken(pToken).burn(msg.sender, to, amountToWithdraw, reserve.liquidityIndex);
+    uint256 amountToWithdraw = IAToken(aToken).withdrawInterest(msg.sender, to, reserve.liquidityIndex);
 
     emit WithdrawInterest(project, msg.sender, to, amountToWithdraw);
 
@@ -434,20 +419,6 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
   }
 
   /**
-   * @dev Returns the percentage of available liquidity that can be borrowed at once at stable rate
-   */
-  function MAX_STABLE_RATE_BORROW_SIZE_PERCENT() public view returns (uint256) {
-    return _maxStableRateBorrowSizePercent;
-  }
-
-  /**
-   * @dev Returns the fee on flash loans
-   */
-  function FLASHLOAN_PREMIUM_TOTAL() public view returns (uint256) {
-    return _flashLoanPremiumTotal;
-  }
-
-  /**
    * @dev Returns the maximum number of reserves supported to be listed in this LendingPool
    */
   function MAX_NUMBER_RESERVES() public view returns (uint256) {
@@ -506,7 +477,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     address project,
     address asset,
     address aTokenAddress,
-    // address pTokenAddress,
+    address pTokenAddress,
     address stableDebtAddress,
     address variableDebtAddress,
     address interestRateStrategyAddress,
@@ -517,7 +488,7 @@ contract LendingPool is VersionedInitializable, ILendingPool, LendingPoolStorage
     _reserves[project].init(
       asset,
       aTokenAddress,
-      // pTokenAddress,
+      pTokenAddress,
       stableDebtAddress,
       variableDebtAddress,
       interestRateStrategyAddress,

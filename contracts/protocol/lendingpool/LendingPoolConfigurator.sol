@@ -84,14 +84,14 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
           input.params
         )
       );
-    /*
+
     address pTokenProxyAddress =
       _initTokenWithProxy(
         input.pTokenImpl,
         abi.encodeWithSelector(
           IInitializablePToken.initialize.selector,
           pool,
-          input.treasury,
+          aTokenProxyAddress,
           input.project,
           IAaveIncentivesController(input.incentivesController),
           input.underlyingAssetDecimals,
@@ -100,7 +100,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
           input.params
         )
       );
-    */
+
     address stableDebtTokenProxyAddress =
       _initTokenWithProxy(
         input.stableDebtTokenImpl,
@@ -135,7 +135,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
       input.project,
       input.underlyingAsset,
       aTokenProxyAddress,
-      // pTokenProxyAddress,
+      pTokenProxyAddress,
       stableDebtTokenProxyAddress,
       variableDebtTokenProxyAddress,
       input.interestRateStrategyAddress,
@@ -155,7 +155,7 @@ contract LendingPoolConfigurator is VersionedInitializable, ILendingPoolConfigur
     emit ReserveInitialized(
       input.project,
       aTokenProxyAddress,
-      // pTokenProxyAddress,
+      pTokenProxyAddress,
       stableDebtTokenProxyAddress,
       variableDebtTokenProxyAddress,
       input.interestRateStrategyAddress

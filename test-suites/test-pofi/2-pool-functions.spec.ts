@@ -21,6 +21,7 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     VL_DEPOSITS_DISABLED,
     VL_WITHDRAWALS_DISABLED,
     VL_BORROWING_NOT_ENABLED,
+    AT_NOT_INTEREST_BALANCE_IS_0,
   } = ProtocolErrors;
 
   before(async () => {
@@ -168,27 +169,11 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     await expect(variableDebtBalance).to.be.equal("0x00");
   });
 
-  /*
-  it('prepare atonken for withdraw interest', async () => {
-    const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
-
-    const amountDAItoDeposit = await convertToCurrencyDecimals(dai.address, '1000');
-
-    await dai.connect(users[5].signer).mint(amountDAItoDeposit);
-    // user 0 deposits 1000 DAI
-    await dai.connect(users[5].signer).approve(pool.address, APPROVAL_AMOUNT_LENDING_POOL);
-    await pool.connect(users[5].signer).deposit(allReserves[1], dai.address, amountDAItoDeposit, users[5].address);
-  });
-*/
-
   it('Try to Withdral interest without balance ', async () => {
     const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
-    console.log('atoken dai balance:');
-    console.log(await dai.balanceOf(aDai.address));
 
-    const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '1');
     await expect(
-      pool.connect(users[5].signer).withdrawInterest(allReserves[1], dai.address, amountDAItoWithdraw, users[5].address)
+      pool.connect(users[5].signer).withdrawInterest(allReserves[1], dai.address, users[5].address)
     ).to.be.revertedWith(VL_NOT_ENOUGH_AVAILABLE_USER_BALANCE);
   });
 
@@ -223,10 +208,9 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
   it('Withdral interest when reserve has not enough balance', async () => {
     const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
 
-    const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '0.00000475127');
     await expect(
-      pool.connect(users[1].signer).withdrawInterest(allReserves[1], dai.address, amountDAItoWithdraw, users[1].address)
-    ).to.be.revertedWith("SafeERC20: low-level call failed");
+      pool.connect(users[1].signer).withdrawInterest(allReserves[1], dai.address, users[1].address)
+    ).to.be.revertedWith('SafeERC20: low-level call failed');
   });
 
   it('Reapay after borrow',  async () => {
@@ -248,24 +232,24 @@ makeSuite('Deposit, Borrow, Withdraw, Repay ', (testEnv: TestEnv) => {
     const { users, pool, dai, aDai, pToken, configurator, allReserves, helpersContract } = testEnv;
 
     const amountDAItoWithdraw = await convertToCurrencyDecimals(dai.address, '1');
-    await pool.connect(users[1].signer).withdrawInterest(allReserves[1], dai.address, "28507636874246", users[1].address);
+    await pool.connect(users[1].signer).withdrawInterest(allReserves[1], dai.address, users[1].address);
 
     function timeout(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
     await timeout(3000);
   });
-
+  /*
   it('print ', async () => {
-    const { users, aDai } = testEnv;
-
+    const { users, aDai, pToken } = testEnv;
+    console.log('user 1 pToken balance:');
+    console.log(await pToken.balanceOf(users[1].address));
     console.log('aToken total supply:');
     console.log(await aDai.totalSupply());
     console.log('user 1 aToken scaled balance:');
     console.log(await aDai.scaledBalanceOf(users[1].address));
     console.log('user 1 aToken balance:');
     console.log(await aDai.balanceOf(users[1].address));
-    console.log('user 1 aToken interest balance:');
-    console.log(await aDai.interestBalanceOf(users[1].address));
   });
+  */
 });

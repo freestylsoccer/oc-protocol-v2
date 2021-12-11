@@ -735,18 +735,7 @@ export const deployATokenImplementations = async (
       await deployImplementationMethod(verify);
     }
   }
-  /*
-  const pTokenAddress = getOptionalParamAddressPerNetwork(
-    poolConfig['PToken'],
-    network
-  );
 
-  if (!notFalsyOrZeroAddress(pTokenAddress)) {
-    const deployImplementationMethod = chooseATokenDeployment(aTokenImplementations[x]);
-    console.log(`Deploying implementation`, 'PToken');
-    await deployImplementationMethod(verify);
-  }
-  */
   // Debt tokens, for now all Market configs follows same implementations
   const genericStableDebtTokenAddress = getOptionalParamAddressPerNetwork(
     poolConfig.StableDebtTokenImplementation,
@@ -765,7 +754,7 @@ export const deployATokenImplementations = async (
   }
 };
 
-/*
+
 export const deployPTokenImplementations = async (
   pool: ConfigNames,
   reservesConfig: { [key: string]: IReserveParams },
@@ -775,45 +764,28 @@ export const deployPTokenImplementations = async (
   const network = <eNetwork>DRE.network.name;
   // console.log(reservesConfig);
   // Obtain the different AToken implementations of all reserves inside the Market config
-  const aTokenImplementations = [
+  const pTokenImplementations = [
     ...Object.entries(reservesConfig).reduce<Set<eContractid>>((acc, [, entry]) => {
       acc.add(entry.pTokenImpl);
       return acc;
     }, new Set<eContractid>()),
   ];
-  // console.log(aTokenImplementations);
+  // console.log(pTokenImplementations);
 
-  for (let x = 0; x < aTokenImplementations.length; x++) {
+  for (let x = 0; x < pTokenImplementations.length; x++) {
     const aTokenAddress = getOptionalParamAddressPerNetwork(
-      poolConfig[aTokenImplementations[x].toString()],
+      poolConfig[pTokenImplementations[x].toString()],
       network
     );
     // console.log(aTokenAddress);
     if (!notFalsyOrZeroAddress(aTokenAddress)) {
-      const deployImplementationMethod = choosePTokenDeployment(aTokenImplementations[x]);
-      console.log(`Deploying implementation`, aTokenImplementations[x]);
+      const deployImplementationMethod = choosePTokenDeployment(pTokenImplementations[x]);
+      console.log(`Deploying implementation`, pTokenImplementations[x]);
       await deployImplementationMethod(verify);
     }
   }
-
-  // Debt tokens, for now all Market configs follows same implementations
-  const genericStableDebtTokenAddress = getOptionalParamAddressPerNetwork(
-    poolConfig.StableDebtTokenImplementation,
-    network
-  );
-  const geneticVariableDebtTokenAddress = getOptionalParamAddressPerNetwork(
-    poolConfig.VariableDebtTokenImplementation,
-    network
-  );
-
-  if (!notFalsyOrZeroAddress(genericStableDebtTokenAddress)) {
-    await deployGenericStableDebtToken(verify);
-  }
-  if (!notFalsyOrZeroAddress(geneticVariableDebtTokenAddress)) {
-    await deployGenericVariableDebtToken(verify);
-  }
 };
-*/
+
 
 export const deployRateStrategy = async (
   strategyName: string,

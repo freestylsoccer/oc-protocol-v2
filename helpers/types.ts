@@ -193,6 +193,8 @@ export enum ProtocolErrors {
   LPAPR_INVALID_ADDRESSES_PROVIDER_ID = '72',
   VL_DEPOSITS_DISABLED = '82',
   VL_WITHDRAWALS_DISABLED = '83',
+  AT_CALLER_MUST_BE_ATOKEN = '84',
+  AT_NOT_INTEREST_BALANCE_IS_0= '85',
 
   // old
 
@@ -419,7 +421,7 @@ export enum ProjectContracId {
 }
 export interface IReserveParams extends IReserveBorrowParams, IReserveCollateralParams {
   aTokenImpl: eContractid;
-  // pTokenImpl: eContractid;
+  pTokenImpl: eContractid;
   reserveFactor: string;
   strategy: IInterestRateStrategyParams;
 }

@@ -217,8 +217,6 @@ interface ILendingPool {
    * E.g. User has 100 aUSDC, calls withdraw() and receives 100 USDC, burning the 100 aUSDC
    * @param project The address of the project contrat associated to the reserve
    * @param asset The address of the underlying asset to withdraw
-   * @param amount The underlying amount to be withdrawn
-   *   - Send the value type(uint256).max in order to withdraw the whole aToken balance
    * @param to Address that will receive the underlying, same as msg.sender if the user
    *   wants to receive it on his own wallet, or a different address if the beneficiary is a
    *   different wallet
@@ -227,7 +225,6 @@ interface ILendingPool {
   function withdrawInterest(
     address project,
     address asset,
-    uint256 amount,
     address to
   ) external returns (uint256);
 
@@ -274,7 +271,7 @@ interface ILendingPool {
     address project,
     address reserve,
     address aTokenAddress,
-    // address pTokenAddress,
+    address pTokenAddress,
     address stableDebtAddress,
     address variableDebtAddress,
     address interestRateStrategyAddress,
