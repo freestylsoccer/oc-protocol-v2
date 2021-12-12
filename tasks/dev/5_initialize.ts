@@ -65,7 +65,7 @@ task('dev:initialize-lending-pool', 'Initialize lending pool configuration.')
       protoPoolReservesAddresses,
       allProjectAddresses,
       ATokenNamePrefix,
-      // PTokenNamePrefix,
+      PTokenNamePrefix,
       StableDebtTokenNamePrefix,
       VariableDebtTokenNamePrefix,
       SymbolPrefix,

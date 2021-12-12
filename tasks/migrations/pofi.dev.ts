@@ -16,27 +16,22 @@ task('pofi:dev', 'Deploy development enviroment')
     }
 
     console.log('Migration started\n');
+    /*
+    console.log('1. Deploy mock tokens');
+    await localBRE.run('dev:deploy-mock-tokens', { verify });
 
-    // console.log('1. Deploy mock tokens');
-    // await localBRE.run('dev:deploy-mock-tokens', { verify: true });
+    console.log('2. Deploy mock projects');
+    await localBRE.run('dev:deploy-mock-projects', { verify });
 
-    // console.log('2. Deploy mock projects');
-    // await localBRE.run('dev:deploy-mock-projects', { verify });
+    console.log('3. Deploy address provider');
+    await localBRE.run('dev:deploy-address-provider', { verify });
 
-    // console.log('3. Deploy address provider');
-    // await localBRE.run('dev:deploy-address-provider', { verify: true });
+    console.log('4. Deploy lending pool');
+    await localBRE.run('dev:deploy-lending-pool', { verify, pool: POOL_NAME });
+    */
 
-    // console.log('4. Deploy lending pool');
-    // await localBRE.run('dev:deploy-lending-pool', { verify, pool: POOL_NAME });
-
-    // // console.log('4. Deploy oracles');
-    // // await localBRE.run('pofi:deploy-oracles', { verify, pool: POOL_NAME });
-
-    // // console.log('5. Deploy WETH Gateway');
-    // // await localBRE.run('pofi:full-deploy-weth-gateway', { verify, pool: POOL_NAME });
-
-    // console.log('5. Initialize lending pool');
-    // await localBRE.run('dev:initialize-lending-pool', { verify, pool: POOL_NAME });
+    console.log('5. Initialize lending pool');
+    await localBRE.run('dev:initialize-lending-pool', { verify, pool: POOL_NAME });
 
     if (true) {
       printContracts();

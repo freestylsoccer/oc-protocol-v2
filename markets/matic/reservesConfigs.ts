@@ -22,6 +22,7 @@ export const strategyDAI: IReserveParams = {
   interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
+  pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -37,6 +38,7 @@ export const strategyUSDC: IReserveParams = {
   interestWithdrawalsEnabled: true,
   reserveDecimals: '6',
   aTokenImpl: eContractid.AToken,
+  pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -52,6 +54,7 @@ export const strategyUSDT: IReserveParams = {
   interestWithdrawalsEnabled: true,
   reserveDecimals: '6',
   aTokenImpl: eContractid.AToken,
+  pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -67,6 +70,7 @@ export const strategyWETH: IReserveParams = {
   interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
+  pTokenImpl: eContractid.PToken,
   reserveFactor: '1000',
 };
 
@@ -82,6 +86,7 @@ export const strategyWBTC: IReserveParams = {
   interestWithdrawalsEnabled: true,
   reserveDecimals: '8',
   aTokenImpl: eContractid.AToken,
+  pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -97,6 +102,7 @@ export const strategyMATIC: IReserveParams = {
   interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
+  pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
@@ -112,5 +118,6 @@ export const strategyAAVE: IReserveParams = {
   interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.AToken,
+  pTokenImpl: eContractid.PToken,
   reserveFactor: '0',
 };

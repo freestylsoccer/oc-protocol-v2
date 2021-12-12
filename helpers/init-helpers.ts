@@ -294,8 +294,8 @@ export const initReservesByHelper2 = async (
       stableDebtTokenName: `${stableDebtTokenNamePrefix} ${symbol}`,
       stableDebtTokenSymbol: `stableDebt${symbolPrefix}${symbol}`,
       params: await getATokenExtraParams(aTokenImpl, tokenAddresses[symbol]),
-      // project: projectAddresses[`Project${symbol}`],
-      project: projectAddresses[symbol],
+      project: projectAddresses[`Project${symbol}`],
+      // project: projectAddresses[symbol],
       projectBorrower: projectBorrower,
     });
   }

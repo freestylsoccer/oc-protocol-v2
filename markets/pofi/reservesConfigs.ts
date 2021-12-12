@@ -281,6 +281,7 @@ export const strategyUNI: IReserveParams = {
   interestWithdrawalsEnabled: true,
   reserveDecimals: '18',
   aTokenImpl: eContractid.DelegationAwareAToken,
+  pTokenImpl: eContractid.PToken,
   reserveFactor: '2000',
 };
 
