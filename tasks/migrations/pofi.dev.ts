@@ -30,16 +30,19 @@ task('pofi:dev', 'Deploy development enviroment')
     await localBRE.run('dev:deploy-lending-pool', { verify, pool: POOL_NAME });
     */
 
-    console.log('5. Initialize lending pool');
-    await localBRE.run('dev:initialize-lending-pool', { verify, pool: POOL_NAME });
+    // console.log('5. Initialize lending pool');
+    // await localBRE.run('dev:initialize-lending-pool', { verify, pool: POOL_NAME });
+
+    console.log('7. Deploy UI pool data provider');
+    await localBRE.run('dev:ui-pool-data-provider', { verify: true });
 
     if (true) {
-      printContracts();
+      // printContracts();
       // console.log('7. Veryfing contracts');
       // await localBRE.run('verify:general', { all: true, pool: POOL_NAME });
 
-      console.log('8. Veryfing aTokens and debtTokens');
-      await localBRE.run('verify:tokens', { pool: POOL_NAME });
+      // console.log('8. Veryfing aTokens and debtTokens');
+      // await localBRE.run('verify:tokens', { pool: POOL_NAME });
     }
 
     console.log('\nFinished migration');

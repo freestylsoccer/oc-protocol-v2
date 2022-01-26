@@ -101,7 +101,6 @@ task('full:initialize-lending-pool', 'Initialize lending pool configuration.')
       await deployWalletBalancerProvider(verify);
 
       const uiPoolDataProvider = await deployUiPoolDataProvider(
-        [incentivesController, oracle],
         verify
       );
       console.log('UiPoolDataProvider deployed at:', uiPoolDataProvider.address);

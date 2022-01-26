@@ -61,7 +61,6 @@ task(`deploy-${eContractid.UiPoolDataProvider}`, `Deploys the UiPoolDataProvider
     console.log(`\n- UiPoolDataProvider deployment`);
 
     const uiPoolDataProvider = await deployUiPoolDataProvider(
-      [incentivesController, oracle],
       verify
     );
 

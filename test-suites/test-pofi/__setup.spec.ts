@@ -33,7 +33,8 @@ import {
   deployATokenImplementations,
   deployPTokenImplementations,
   deployAaveOracle,
-  deployMockProjects
+  deployMockProjects,
+  deployUiPoolDataProviderV2V3
 } from '../../helpers/contracts-deployments';
 import { Signer } from 'ethers';
 import { TokenContractId2, eContractid, tEthereumAddress, AavePools } from '../../helpers/types';
@@ -275,7 +276,8 @@ const buildTestEnv = async (deployer: Signer, secondaryWallet: Signer) => {
   const { ATokenNamePrefix, PTokenNamePrefix, StableDebtTokenNamePrefix, VariableDebtTokenNamePrefix, SymbolPrefix } =
     config;
   const treasuryAddress = await getTreasuryAddress(config);
- 
+  console.log("deploying ui pool data provider...")
+  await deployUiPoolDataProviderV2V3();
   await initReservesByHelper2(
     reservesParams,
     allReservesAddresses,

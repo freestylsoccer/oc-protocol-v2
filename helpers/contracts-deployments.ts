@@ -55,6 +55,7 @@ import {
   WETHGatewayFactory,
   FlashLiquidationAdapterFactory,
   ProjectFactory,
+  UiPoolDataProviderV2V3Factory,
 } from '../types';
 import {
   withSaveAndVerify,
@@ -74,17 +75,26 @@ import { UiPoolDataProvider } from '../types';
 import { eNetwork } from './types';
 
 export const deployUiPoolDataProvider = async (
-  [incentivesController, aaveOracle]: [tEthereumAddress, tEthereumAddress],
   verify?: boolean
 ) => {
   const id = eContractid.UiPoolDataProvider;
-  const args: string[] = [incentivesController, aaveOracle];
+  const args: string[] = [];
   const instance = await deployContract<UiPoolDataProvider>(id, args);
   if (verify) {
     await verifyContract(id, instance, args);
   }
   return instance;
 };
+
+export const deployUiPoolDataProviderV2V3 = async (
+  verify?: boolean
+) =>
+  withSaveAndVerify(
+    await new UiPoolDataProviderV2V3Factory(await getFirstSigner()).deploy(),
+    eContractid.UiPoolDataProvider,
+    [],
+    verify
+  );
 
 const readArtifact = async (id: string) => {
   if (DRE.network.name === eEthereumNetwork.buidlerevm) {

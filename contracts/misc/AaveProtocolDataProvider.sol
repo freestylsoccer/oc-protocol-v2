@@ -141,7 +141,7 @@ contract AaveProtocolDataProvider {
       ILendingPool(ADDRESSES_PROVIDER.getLendingPool()).getUserConfiguration(user);
 
     currentATokenBalance = IERC20Detailed(reserve.aTokenAddress).balanceOf(user);
-    currentATokenBalance = IERC20Detailed(reserve.pTokenAddress).balanceOf(user);
+    currentPTokenBalance = IERC20Detailed(reserve.pTokenAddress).balanceOf(user);
     currentStableDebt = IERC20Detailed(reserve.stableDebtTokenAddress).balanceOf(user);
     principalStableDebt = IStableDebtToken(reserve.stableDebtTokenAddress).principalBalanceOf(user);
     liquidityRate = reserve.currentLiquidityRate;

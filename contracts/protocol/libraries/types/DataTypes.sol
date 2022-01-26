@@ -27,9 +27,10 @@ library DataTypes {
     uint8 id;
     // underlaying asset
     address underlyingAsset;
-    // project borrower of the project
+    // project borrower
     address projectBorrower;
     address pTokenAddress;
+    address project;
   }
 
   struct ReserveConfigurationMap {

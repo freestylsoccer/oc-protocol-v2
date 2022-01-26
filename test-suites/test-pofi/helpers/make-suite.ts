@@ -17,14 +17,16 @@ import {
   getFlashLiquidationAdapter,
   getParaSwapLiquiditySwapAdapter,
   getStableDebtToken,
-  getVariableDebtToken
+  getVariableDebtToken,
+  getUiPoolDataProvider
+
 } from '../../../helpers/contracts-getters';
 import { eEthereumNetwork, eNetwork, tEthereumAddress } from '../../../helpers/types';
 import { LendingPool } from '../../../types/LendingPool';
 import { AaveProtocolDataProvider } from '../../../types/AaveProtocolDataProvider';
 import { MintableERC20 } from '../../../types/MintableERC20';
 import { AToken } from '../../../types/AToken';
-import { StableDebtToken } from '../../../types';
+import { StableDebtToken, UiPoolDataProviderV2V3 } from '../../../types';
 import { VariableDebtToken } from '../../../types';
 import { PToken } from '../../../types';
 import { LendingPoolConfigurator } from '../../../types/LendingPoolConfigurator';
@@ -85,6 +87,7 @@ export interface TestEnv {
   variableDebTokenUsdc: VariableDebtToken;
   pToken: PToken;
   pUsdc: PToken;
+  uiPoolDataProvider: UiPoolDataProviderV2V3;
 }
 
 let buidlerevmSnapshotId: string = '0x1';
@@ -120,6 +123,7 @@ const testEnv: TestEnv = {
   variableDebTokenUsdc: {} as VariableDebtToken,
   pToken: {} as PToken,
   pUsdc: {} as PToken,
+  uiPoolDataProvider: {} as UiPoolDataProviderV2V3
 } as TestEnv;
 
 export async function initializeMakeSuite() {
@@ -167,7 +171,8 @@ export async function initializeMakeSuite() {
   const usdcAddress = reservesTokens.find((token) => token.symbol === 'USDC')?.tokenAddress;
   // const aaveAddress = reservesTokens.find((token) => token.symbol === 'AAVE')?.tokenAddress;
   // const wethAddress = reservesTokens.find((token) => token.symbol === 'WETH')?.tokenAddress;
-  
+  testEnv.uiPoolDataProvider =  await getUiPoolDataProvider();
+  console.log(await testEnv.uiPoolDataProvider.getReservesData(await testEnv.addressesProvider.address));
   testEnv.allReserves = await testEnv.pool.getReservesList();
 
   // console.log(await testEnv.pool.getUnderlyingAsset(testEnv.allReserves[1]));
